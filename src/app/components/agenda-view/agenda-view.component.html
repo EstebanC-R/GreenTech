@@ -1,0 +1,338 @@
+<div class="agenda-container">
+    <!-- Header con estadísticas -->
+    <div class="agenda-header">
+        <div class="header-title">
+            <h1>📅 Mi Agenda</h1>
+            <p *ngIf="currentUser">
+                <span class="user-info">{{ currentUser.email }}</span>
+                <span class="user-role" [class]="currentUser.rol.toLowerCase()">
+                    {{ currentUser.rol }}
+                </span>
+            </p>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="estadisticas-grid" *ngIf="!loading">
+            <div class="stat-card">
+                <div class="stat-number">{{ estadisticas.totalEventos }}</div>
+                <div class="stat-label">Total Eventos</div>
+            </div>
+            <div class="stat-card pending">
+                <div class="stat-number">{{ estadisticas.eventosPendientes }}</div>
+                <div class="stat-label">Pendientes</div>
+            </div>
+            <div class="stat-card completed">
+                <div class="stat-number">{{ estadisticas.eventosCompletados }}</div>
+                <div class="stat-label">Completados</div>
+            </div>
+            <div class="stat-card today">
+                <div class="stat-number">{{ estadisticas.eventosHoy }}</div>
+                <div class="stat-label">Hoy</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div class="error-message" *ngIf="error">
+        <span class="error-icon">⚠️</span>
+        {{ error }}
+    </div>
+
+    <!-- Controles principales -->
+    <div class="controles-principales">
+        <!-- Selector de vista -->
+        <div class="vista-selector">
+            <button 
+                class="btn-vista" 
+                [class.active]="vistaActual === 'calendario'"
+                (click)="cambiarVista('calendario')">
+                📅 Calendario
+            </button>
+            <button 
+                class="btn-vista" 
+                [class.active]="vistaActual === 'lista'"
+                (click)="cambiarVista('lista')">
+                📋 Lista
+            </button>
+        </div>
+
+        <!-- Botón crear evento (solo admin) -->
+        <button 
+            class="btn-crear"
+            *ngIf="esAdministrador"
+            (click)="abrirModalCrear()"
+            [disabled]="loading">
+            <i class='bx bx-plus'></i> 
+            Nuevo Evento
+        </button>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filtros-section">
+        <div class="filtros-grid">
+            <div class="filtro-group">
+                <label>🔍 Buscar:</label>
+                <input 
+                    type="text" 
+                    [(ngModel)]="busqueda" 
+                    (input)="aplicarFiltros()"
+                    placeholder="Buscar por título o descripción..."
+                    class="filtro-input">
+            </div>
+            
+            <div class="filtro-group">
+                <label>🏷️ Tipo:</label>
+                <select 
+                    [(ngModel)]="filtroTipo" 
+                    (change)="aplicarFiltros()"
+                    class="filtro-select">
+                    <option value="">Todos los tipos</option>
+                    <option *ngFor="let tipo of tiposEvento" [value]="tipo">
+                        {{ formatearTipo(tipo) }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="filtro-group">
+                <label>✅ Estado:</label>
+                <select 
+                    [(ngModel)]="filtroCompletado" 
+                    (change)="aplicarFiltros()"
+                    class="filtro-select">
+                    <option value="">Todos</option>
+                    <option value="false">Pendientes</option>
+                    <option value="true">Completados</option>
+                </select>
+            </div>
+
+            <button class="btn-limpiar" (click)="limpiarFiltros()">
+                🧹 Limpiar
+            </button>
+        </div>
+    </div>
+
+    <!-- Vista Calendario -->
+    <div class="vista-calendario" *ngIf="vistaActual === 'calendario' && !loading">
+        <!-- Navegación del calendario -->
+        <div class="calendario-nav">
+            <button class="nav-btn" (click)="mesAnterior()">‹</button>
+            <h2 class="mes-actual">
+                {{ meses[fechaActual.getMonth()] }} {{ fechaActual.getFullYear() }}
+            </h2>
+            <button class="nav-btn" (click)="mesSiguiente()">›</button>
+            <button class="btn-hoy" (click)="irAHoy()">Hoy</button>
+        </div>
+
+        <!-- Días de la semana -->
+        <div class="calendario-header">
+            <div class="dia-semana">Dom</div>
+            <div class="dia-semana">Lun</div>
+            <div class="dia-semana">Mar</div>
+            <div class="dia-semana">Mié</div>
+            <div class="dia-semana">Jue</div>
+            <div class="dia-semana">Vie</div>
+            <div class="dia-semana">Sáb</div>
+        </div>
+
+        <!-- Grid del calendario -->
+        <div class="calendario-grid">
+            <div 
+                class="calendario-dia" 
+                *ngFor="let dia of calendarioDias"
+                [class.otro-mes]="!dia.isCurrentMonth"
+                [class.hoy]="dia.isToday">
+        
+                <div class="dia-numero">{{ dia.day }}</div>
+        
+                <div class="eventos-dia" *ngIf="dia.events.length > 0">
+                    <div 
+                        class="evento-mini"
+                        *ngFor="let evento of dia.events; let i = index"
+                        [style.background-color]="getColorTipo(evento.tipo)"
+                        [class.completado]="evento.completado"
+                        [title]="evento.titulo + ' - ' + formatearTipo(evento.tipo)"
+                        (click)="abrirModalEditar(evento)">
+                        {{ evento.titulo.length > 15 ? evento.titulo.substring(0, 15) + '...' : evento.titulo }}
+                    </div>
+                    <div class="mas-eventos" *ngIf="dia.events.length > 3">
+                        +{{ dia.events.length - 3 }} más
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vista Lista -->
+    <div class="vista-lista" *ngIf="vistaActual === 'lista' && !loading">
+        <div class="eventos-lista" *ngIf="eventosFiltrados.length > 0">
+            <div 
+                class="evento-card" 
+                *ngFor="let evento of eventosFiltrados"
+                [class.completado]="evento.completado">
+        
+                <div class="evento-header">
+                    <div class="evento-tipo" [style.background-color]="getColorTipo(evento.tipo)">
+                        {{ formatearTipo(evento.tipo) }}
+                    </div>
+                    <div class="evento-fecha">
+                        {{ formatearFecha(evento.fechaEvento) }}
+                    </div>
+                </div>
+
+                <div class="evento-content">
+                    <h3 class="evento-titulo">{{ evento.titulo }}</h3>
+                    <p class="evento-descripcion" *ngIf="evento.descripcion">
+                        {{ evento.descripcion }}
+                    </p>
+                </div>
+
+                <div class="evento-actions" *ngIf="esAdministrador">
+                    <button 
+                        class="btn-action completar"
+                        *ngIf="!evento.completado"
+                        (click)="toggleCompletado(evento)"
+                        title="Marcar como completado">
+                        ✓
+                    </button>
+                    
+                    <button 
+                        class="btn-action editar"
+                        (click)="abrirModalEditar(evento)"
+                        title="Editar evento">
+                        ✏️
+                    </button>
+                    
+                    <button 
+                        class="btn-action eliminar"
+                        (click)="eliminarEvento(evento)"
+                        title="Eliminar evento">
+                        🗑️
+                    </button>
+                </div>
+
+                <div class="evento-status">
+                    <span class="status-badge" [class.completado]="evento.completado">
+                        {{ evento.completado ? 'Completado' : 'Pendiente' }}
+                    </span>
+                    <small class="propietario" *ngIf="evento.propietario">
+                        Por: {{ evento.propietario }}
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensaje sin eventos -->
+        <div class="sin-eventos" *ngIf="eventosFiltrados.length === 0">
+            <div class="sin-eventos-icon">📅</div>
+            <h3>No hay eventos</h3>
+            <p *ngIf="filtroTipo || filtroCompletado || busqueda">
+                No se encontraron eventos con los filtros aplicados.
+            </p>
+            <p *ngIf="!filtroTipo && !filtroCompletado && !busqueda">
+                Aún no tienes eventos en tu agenda.
+            </p>
+            <button 
+                class="btn-crear-inline" 
+                *ngIf="esAdministrador"
+                (click)="abrirModalCrear()">
+                Crear mi primer evento
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-container" *ngIf="loading">
+        <div class="loading-spinner"></div>
+        <p>Cargando eventos...</p>
+    </div>
+
+    <!-- Modal para crear/editar evento -->
+    <div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>{{ modoEdicion ? 'Editar Evento' : 'Nuevo Evento' }}</h2>
+                <button class="btn-cerrar" (click)="cerrarModal()">×</button>
+            </div>
+
+            <form [formGroup]="eventoForm" (ngSubmit)="guardarEvento()" class="evento-form">
+                <div class="form-group">
+                    <label for="titulo">Título *</label>
+                    <input 
+                        type="text" 
+                        id="titulo"
+                        formControlName="titulo"
+                        placeholder="Ingrese el título del evento"
+                        maxlength="150"
+                        class="form-input"
+                        [class.error]="eventoForm.get('titulo')?.invalid && eventoForm.get('titulo')?.touched">
+                    <div class="error-text" *ngIf="eventoForm.get('titulo')?.invalid && eventoForm.get('titulo')?.touched">
+                        El título es requerido (máximo 150 caracteres)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea 
+                        id="descripcion"
+                        formControlName="descripcion"
+                        placeholder="Descripción opcional del evento"
+                        rows="3"
+                        class="form-textarea"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fechaEvento">Fecha y Hora *</label>
+                        <input 
+                            type="datetime-local" 
+                            id="fechaEvento"
+                            formControlName="fechaEvento"
+                            class="form-input"
+                            [class.error]="eventoForm.get('fechaEvento')?.invalid && eventoForm.get('fechaEvento')?.touched">
+                        <div class="error-text" *ngIf="eventoForm.get('fechaEvento')?.invalid && eventoForm.get('fechaEvento')?.touched">
+                            La fecha es requerida
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipo">Tipo de Evento</label>
+                        <select 
+                            id="tipo"
+                            formControlName="tipo"
+                            class="form-select">
+                            <option *ngFor="let tipo of tiposEvento" [value]="tipo">
+                                {{ formatearTipo(tipo) }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" *ngIf="modoEdicion">
+                    <label class="checkbox-label">
+                        <input 
+                            type="checkbox" 
+                            formControlName="completado"
+                            class="form-checkbox">
+                        <span class="checkmark"></span>
+                        Evento completado
+                    </label>
+                </div>
+
+                <div class="modal-actions">
+                    <button 
+                        type="button" 
+                        class="btn-cancelar"
+                        (click)="cerrarModal()">
+                        Cancelar
+                    </button>
+                    <button 
+                        type="submit" 
+                        class="btn-guardar"
+                        [disabled]="!eventoForm.valid || loading">
+                        {{ modoEdicion ? 'Actualizar' : 'Crear' }} Evento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

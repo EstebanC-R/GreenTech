@@ -1,0 +1,90 @@
+<div class="container">
+    <div class="layout-cultivos">
+        <h2 class="title-reportes">
+            <span class="reporte"><i class='bx bx-news'></i></span>
+            Generar Reporte
+        </h2>
+        <div class="rutas-cultivos">
+            <ul class="lista">
+                <li class="lista-li"><button routerLink="/cultivos">Cultivos</button></li>
+                <li class="lista-li"><button routerLink="/insumos">Insumos</button></li>
+                <li class="lista-li active"><button routerLink="/vista-reportes">Reportes</button></li>
+            </ul>
+        </div>
+        
+        <div class="content-area">
+            <form (ngSubmit)="onSubmit()" #formRef="ngForm">
+                <div class="form-group">
+                    <label for="fecha-inicio">Fecha de Inicio:</label>
+                    <input
+                        type="date"
+                        id="fecha-inicio"
+                        name="fechaInicio"
+                        [(ngModel)]="fechaInicio"
+                        required
+                        [disabled]="isGenerating"
+                    />
+                </div>
+                
+                <div class="form-group">
+                    <label for="fecha-fin">Fecha de Finalización:</label>
+                    <input
+                        type="date"
+                        id="fecha-fin"
+                        name="fechaFin"
+                        [(ngModel)]="fechaFin"
+                        required
+                        [disabled]="isGenerating"
+                    />
+                </div>
+                
+                <div class="checklist">
+                    <h3 class="checklist-title">¿Qué quiere ver en el reporte?</h3>
+                    
+                    <div class="checklist-item" *ngFor="let opcion of opcionesReporte">
+                        <input
+                            type="checkbox"
+                            [id]="opcion.valor"
+                            [(ngModel)]="opcion.seleccionado"
+                            [name]="'reporte_' + opcion.valor"
+                            [disabled]="isGenerating"
+                        />
+                        <label [for]="opcion.valor">{{ opcion.etiqueta }}</label>
+                    </div>
+                </div>
+                
+                <!-- Indicador de carga -->
+                <div *ngIf="isGenerating" class="loading-indicator">
+                    <div class="spinner"></div>
+                    <p>Generando reporte, por favor espere...</p>
+                </div>
+                
+                <!-- Botón de descarga -->
+                <div class="btn-add">
+                    <button 
+                        type="submit" 
+                        class="btn" 
+                        id="addBtn"
+                        [disabled]="isGenerating || !formRef.valid"
+                        [class.disabled]="isGenerating || !formRef.valid"
+                    >
+                        <i class='bx bxs-file-pdf' *ngIf="!isGenerating"></i>
+                        <i class='bx bx-loader-alt bx-spin' *ngIf="isGenerating"></i>
+                        <p class="text-btn">{{ isGenerating ? 'Generando...' : 'Generar PDF' }}</p>
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Información adicional -->
+            <div class="info-panel">
+                <h4><i class='bx bx-info-circle'></i> Información del Reporte</h4>
+                <ul>
+                    <li>El reporte se generará en formato PDF</li>
+                    <li>Incluirá estadísticas y gráficos de los datos seleccionados</li>
+                    <li>Los datos de sensores incluyen promedios, máximos y mínimos</li>
+                    <li>Los insumos incluyen resumen de costos por proveedor</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

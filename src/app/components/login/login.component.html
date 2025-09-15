@@ -1,0 +1,58 @@
+<div class="cuerpo-container">
+    <div class="container">
+        <div class="container_cuadro">
+            <h2>¡Bienvenido!</h2>
+        </div>
+        <div class="imagen">
+            <div class="logo">
+                <img src="/assets/images/logo_white.png" alt="">
+            </div>
+        </div>
+        <div class="form-box login">
+            <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+                <h1>Login</h1>
+
+                <!-- Mostrar mensaje de error -->
+                <div *ngIf="errorMessage" class="error-message">
+                    {{ errorMessage }}
+                </div>
+
+                <div class="input-box">
+                    <input 
+                        type="email" 
+                        placeholder="Email" 
+                        [(ngModel)]="credentials.email"
+                        name="email"
+                        (input)="clearError()"
+                        required>
+                    <i class='bx bxs-user'></i>
+                </div>
+                
+                <div class="input-box">
+                    <input 
+                        type="password" 
+                        placeholder="Password" 
+                        [(ngModel)]="credentials.password"
+                        name="password"
+                        (input)="clearError()"
+                        required>
+                    <i class='bx bxs-lock-alt'></i>
+                </div>
+                
+                <div class="forgot-link">
+                    <a routerLink="/forgot-password" class="link">Olvidaste la contraseña?</a>
+                </div>
+                
+                <div class="wrapper">
+                    <button 
+                        type="submit" 
+                        class="btn btn-1"
+                        [disabled]="isLoading">
+                        <span *ngIf="!isLoading">Login</span>
+                        <span *ngIf="isLoading">Cargando...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

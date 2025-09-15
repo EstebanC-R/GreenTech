@@ -1,0 +1,120 @@
+<div class="layout-container">
+    <aside #sidebar class="sidebar" [class.collapsed]="isCollapsed" [class.menu-active]="isMenuActive">
+        <!-- --------------------Sidebar---------------- -->
+        <header class="sidebar-header">
+            <a routerLink="" class="header-logo">
+                <img src="assets/images/logo_white_greentech__R.png" alt="Logo GreenTech" />
+            </a>
+            <button class="toggler sidebar-toggler" (click)="toggleSidebar()">
+                <span class="material-symbols-rounded">chevron_left</span>
+            </button>
+            <button class="toggler menu-toggler" (click)="toggleMenu()">
+                <span class="material-symbols-rounded">menu</span>
+            </button>
+        </header>
+    
+        <nav class="sidebar-nav">
+            <!-- ---------- Primary top nav -------------- -->
+            <ul class="nav-list primary-nav">
+                <li class="nav-item">
+                    <a routerLink="/dashboard" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">dashboard</span>
+                        <span class="nav-label">Dashboard</span>
+                    </a>
+                    <span class="nav-tooltip">Dashboard</span>
+                </li>
+                <li class="nav-item">
+                    <a routerLink="/cultivos" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">nature</span>
+                        <span class="nav-label">Cultivo</span>
+                    </a>
+                    <span class="nav-tooltip">Cultivo</span>
+                </li>
+                <li class="nav-item">
+                    <a routerLink="/observaciones" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">visibility</span>
+                        <span class="nav-label">Observaciones</span>
+                    </a>
+                    <span class="nav-tooltip">Observaciones</span>
+                </li>
+                <li class="nav-item">
+                    <a routerLink="#" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">recommend</span>
+                        <span class="nav-label">Recomendaciones</span>
+                    </a>
+                    <span class="nav-tooltip">Recomendaciones</span>
+                </li>
+                <li class="nav-item">
+                    <a 
+                        [routerLink]="userProfile?.rol === 'ADMINISTRADOR' ? '/empleados' : null"
+                        class="nav-link"
+                        [class.disabled]="userProfile?.rol !== 'ADMINISTRADOR'"
+                        (click)="userProfile?.rol !== 'ADMINISTRADOR' ? $event.preventDefault() : null">
+                        <span class="nav-icon material-symbols-rounded">people</span>
+                        <span class="nav-label">Empleados</span>
+                    </a>
+                    <span class="nav-tooltip">Empleados</span>
+                </li>
+                <li class="nav-item">
+                    <a routerLink="#" class="nav-link">
+                        <span class="nav-icon material-symbols-rounded">notifications</span>
+                        <span class="nav-label">Notificaciones</span>
+                    </a>
+                    <span class="nav-tooltip">Notificaciones</span>
+                </li>
+            </ul>
+
+            <!-- ---------- Secondary bottom nav -------------- -->
+            <ul class="nav-list secondary-nav">
+                <li class="nav-item">
+                    <a routerLink="/profile" class="nav-link" routerLinkActive="active">
+                        <span class="nav-icon material-symbols-rounded">account_circle</span>
+                        <span class="nav-label">Profile</span>
+                    </a>
+                    <span class="nav-tooltip">Profile</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" (click)="showLogoutConfirmation()">
+                        <span class="nav-icon material-symbols-rounded">logout</span>
+                        <span class="nav-label">Logout</span>
+                    </a>
+                    <span class="nav-tooltip">Logout</span>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Modal de Confirmación de Logout -->
+    <div *ngIf="showLogoutConfirm" class="modal-overlay" (click)="cancelLogout()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Confirmar Cierre de Sesión</h3>
+            </div>
+
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas cerrar sesión?</p>
+                <p class="modal-subtitle">Tendrás que volver a iniciar sesión para acceder a la aplicación.</p>
+            </div>
+    
+            <div class="modal-actions">
+                <button 
+                    class="btn-cancel" 
+                    (click)="cancelLogout()"
+                    type="button">
+                    Cancelar
+                </button>
+                <button 
+                    class="btn-confirm" 
+                    (click)="confirmLogout()"
+                    type="button">
+                    <span class="material-symbols-rounded">logout</span>
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <main class="main-content">
+        <router-outlet></router-outlet> 
+    </main>
+</div>

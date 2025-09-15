@@ -1,0 +1,831 @@
+/* ==================== ESTILOS GENERALES ==================== */
+.agenda-container {
+    padding: 16px;
+    background: #f8fafc;
+    min-height: 100vh;
+    font-family: -apple-system, 'Poppins', sans-serif;
+    font-size: 14px;
+}
+
+/* ==================== HEADER Y ESTADÍSTICAS ==================== */
+.agenda-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    gap: 16px;
+}
+
+.header-title h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 4px 0;
+}
+
+.header-title p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+}
+
+.user-info {
+    color: #64748b;
+}
+
+.user-role {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.user-role.administrador {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.user-role.empleado {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.estadisticas-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.stat-card {
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 1px solid #e2e8f0;
+}
+
+.stat-card.pending {
+    border-left: 3px solid #f59e0b;
+}
+
+.stat-card.completed {
+    border-left: 3px solid #10b981;
+}
+
+.stat-card.today {
+    border-left: 3px solid #3b82f6;
+}
+
+.stat-number {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 2px;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* ==================== MENSAJES ==================== */
+.error-message {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+}
+
+.error-icon {
+    font-size: 1rem;
+}
+
+/* ==================== CONTROLES PRINCIPALES ==================== */
+.controles-principales {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 12px;
+}
+
+.vista-selector {
+    display: flex;
+    background: white;
+    border-radius: 6px;
+    padding: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-vista {
+    padding: 6px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-vista.active {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-crear {
+    padding: 6px 14px;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    display: flex;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.75rem;
+    align-items: center;
+}
+
+.btn-crear:hover:not(:disabled) {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.btn-crear:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ==================== FILTROS ==================== */
+.filtros-section {
+    background: white;
+    padding: 14px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+}
+
+.filtros-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.filtro-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filtro-group label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.filtro-input, .filtro-select {
+    padding: 6px 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    transition: border-color 0.2s;
+}
+
+.filtro-input:focus, .filtro-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.btn-limpiar {
+    padding: 6px 12px;
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-limpiar:hover {
+    background: #e5e7eb;
+}
+
+/* ==================== VISTA CALENDARIO ==================== */
+.vista-calendario {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.calendario-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.mes-actual {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.nav-btn, .btn-hoy {
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.nav-btn:hover, .btn-hoy:hover {
+    background: #f3f4f6;
+}
+
+.btn-hoy {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #3b82f6;
+}
+
+.calendario-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    margin-bottom: 12px;
+}
+
+.dia-semana {
+    padding: 8px;
+    text-align: center;
+    font-weight: 600;
+    color: #64748b;
+    font-size: 0.75rem;
+    background: #f8fafc;
+    border-radius: 4px;
+}
+
+.calendario-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.calendario-dia {
+    min-height: 80px;
+    padding: 6px;
+    background: white;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    position: relative;
+    transition: background-color 0.2s;
+}
+
+.calendario-dia:hover {
+    background: #f8fafc;
+}
+
+.calendario-dia.otro-mes {
+    background: #f8fafc;
+    color: #94a3b8;
+}
+
+.calendario-dia.hoy {
+    background: #eff6ff;
+    border: 2px solid #3b82f6;
+}
+
+.dia-numero {
+    font-weight: 600;
+    font-size: 0.75rem;
+    margin-bottom: 3px;
+}
+
+.eventos-dia {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.evento-mini {
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 0.625rem;
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    line-height: 1.2;
+    transition: opacity 0.2s;
+}
+
+.evento-mini:hover {
+    opacity: 0.8;
+}
+
+.evento-mini.completado {
+    opacity: 0.6;
+    text-decoration: line-through;
+}
+
+.mas-eventos {
+    font-size: 0.625rem;
+    color: #64748b;
+    text-align: center;
+    padding: 1px;
+}
+
+/* ==================== VISTA LISTA ==================== */
+.vista-lista {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.eventos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.evento-card {
+    padding: 14px;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    transition: background-color 0.2s;
+}
+
+.evento-card:hover {
+    background: #f8fafc;
+}
+
+.evento-card.completado {
+    opacity: 0.7;
+    background: #f9fafb;
+}
+
+.evento-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.evento-tipo {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+}
+
+.evento-fecha {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.evento-titulo {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 6px 0;
+}
+
+.evento-card.completado .evento-titulo {
+    text-decoration: line-through;
+}
+
+.evento-descripcion {
+    color: #64748b;
+    margin: 0 0 10px 0;
+    line-height: 1.5;
+    font-size: 0.75rem;
+}
+
+.evento-actions {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.btn-action {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+}
+
+.btn-action.completar {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.btn-action.completar:hover {
+    background: #bbf7d0;
+}
+
+.btn-action.editar {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.btn-action.editar:hover {
+    background: #bfdbfe;
+}
+
+.btn-action.eliminar {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-action.eliminar:hover {
+    background: #fecaca;
+}
+
+.evento-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge.completado {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.propietario {
+    color: #64748b;
+    font-size: 0.625rem;
+}
+
+/* ==================== SIN EVENTOS ==================== */
+.sin-eventos {
+    text-align: center;
+    padding: 40px 20px;
+    color: #64748b;
+}
+
+.sin-eventos-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+.sin-eventos h3 {
+    font-size: 1rem;
+    color: #374151;
+    margin-bottom: 6px;
+}
+
+.sin-eventos p {
+    margin-bottom: 16px;
+    font-size: 0.875rem;
+}
+
+.btn-crear-inline {
+    padding: 8px 16px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.75rem;
+}
+
+.btn-crear-inline:hover {
+    background: #2563eb;
+}
+
+/* ==================== LOADING ==================== */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    color: #64748b;
+}
+
+.loading-spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 12px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ==================== MODAL ==================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 16px;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.btn-cerrar {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    color: #64748b;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.btn-cerrar:hover {
+    background: #f1f5f9;
+    color: #374151;
+}
+
+/* ==================== FORMULARIO ==================== */
+.evento-form {
+    padding: 16px;
+}
+
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.form-input, .form-textarea, .form-select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.form-input.error, .form-textarea.error, .form-select.error {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.error-text {
+    color: #dc2626;
+    font-size: 0.625rem;
+    margin-top: 3px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.75rem;
+    gap: 6px;
+}
+
+.form-checkbox {
+    margin: 0;
+}
+
+.checkmark {
+    font-weight: 500;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn-cancelar, .btn-guardar {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-cancelar {
+    background: white;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.btn-cancelar:hover {
+    background: #f9fafb;
+}
+
+.btn-guardar {
+    background: #3b82f6;
+    color: white;
+    border: 1px solid #3b82f6;
+}
+
+.btn-guardar:hover:not(:disabled) {
+    background: #2563eb;
+}
+
+.btn-guardar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ==================== INFO EMPLEADO ==================== */
+.info-empleado {
+    margin-top: 16px;
+}
+
+.info-card {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    padding: 12px;
+}
+
+.info-card h3 {
+    color: #1d4ed8;
+    font-size: 0.875rem;
+    margin: 0 0 6px 0;
+}
+
+.info-card p {
+    color: #1e40af;
+    margin: 0 0 6px 0;
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+.info-card p:last-child {
+    margin-bottom: 0;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+    .estadisticas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .agenda-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .agenda-container {
+        padding: 12px;
+    }
+    
+    .estadisticas-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .controles-principales {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filtros-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .calendario-dia {
+        min-height: 60px;
+    }
+    
+    .evento-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    
+    .modal-overlay {
+        padding: 8px;
+    }
+}
+
+@media (max-width: 640px) {
+    .calendario-grid {
+        gap: 0;
+    }
+    
+    .calendario-dia {
+        min-height: 50px;
+        padding: 3px;
+    }
+    
+    .dia-numero {
+        font-size: 0.625rem;
+    }
+    
+    .evento-mini {
+        font-size: 0.5rem;
+        padding: 1px 3px;
+    }
+}

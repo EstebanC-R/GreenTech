@@ -1,0 +1,124 @@
+<!-- Componente de Perfil -->
+<div class="profile-container">
+    <!-- Header del perfil -->
+    <div class="profile-header">
+        <div class="profile-title">
+            <h2>Mi Perfil</h2>
+            <button 
+                class="btn-refresh" 
+                (click)="refreshProfile()" 
+                [disabled]="isLoading"
+                title="Actualizar perfil">
+                <span class="material-symbols-rounded" [class.spinning]="isLoading">refresh</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Cargando información del perfil...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="error-container">
+        <div class="error-message">
+            <span class="material-symbols-rounded">warning</span>
+            <span>{{ errorMessage }}</span>
+        </div>
+        <button class="btn-retry" (click)="loadUserProfile()">
+            Intentar nuevamente
+        </button>
+    </div>
+
+    <!-- Perfil del Usuario -->
+    <div *ngIf="userProfile && !isLoading" class="profile-content">
+        <!-- Información del Usuario -->
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <div class="avatar-circle">
+                    <span class="avatar-initial">{{ userProfile.email.charAt(0).toUpperCase() }}</span>
+                </div>
+            </div>
+
+            <div class="profile-info">
+                <div class="info-group">
+                    <label class="info-label">Email</label>
+                    <div class="info-value">
+                        <span class="material-symbols-rounded">email</span>
+                        <span>{{ userProfile.email }}</span>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <label class="info-label">Rol</label>
+                    <div class="info-value">
+                        <span class="material-symbols-rounded">person</span>
+                        <span class="role-badge" [ngClass]="'role-' + userProfile.rol.toLowerCase()">
+                            {{ getRolDisplayName(userProfile.rol) }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <label class="info-label">Estado</label>
+                    <div class="info-value">
+                        <span class="material-symbols-rounded">circle</span>
+                        <span class="status-badge" [ngClass]="getEstadoClass(userProfile.estado)">
+                            {{ userProfile.estado }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <label class="info-label">Fecha de Ingreso</label>
+                    <div class="info-value">
+                        <span class="material-symbols-rounded">calendar_today</span>
+                        <span>{{ formatDate(userProfile.fechaIngreso) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones del Perfil -->
+        <div class="profile-actions">
+            <button 
+                class="btn-logout" 
+                (click)="showLogoutConfirmation()"
+                type="button">
+                <span class="material-symbols-rounded">logout</span>
+                Cerrar Sesión
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación de Logout -->
+    <div *ngIf="showLogoutConfirm" class="modal-overlay" (click)="cancelLogout()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Confirmar Cierre de Sesión</h3>
+            </div>
+
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas cerrar sesión?</p>
+                <p class="modal-subtitle">Tendrás que volver a iniciar sesión para acceder a la aplicación.</p>
+            </div>
+    
+            <div class="modal-actions">
+                <button 
+                    class="btn-cancel" 
+                    (click)="cancelLogout()"
+                    type="button">
+                    Cancelar
+                </button>
+                <button 
+                    class="btn-confirm" 
+                    (click)="confirmLogout()"
+                    type="button">
+                    <span class="material-symbols-rounded">logout</span>
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

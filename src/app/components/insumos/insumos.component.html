@@ -1,0 +1,115 @@
+<div class="container">
+    <div class="layout-cultivos">
+        <h2 class="title-insumos">
+            <span class="lapiz"><i class='bx bx-package'></i></span>
+            Gestión de Insumos
+        </h2>
+        
+        <div class="rutas-cultivos">
+            <ul class="lista">
+                <li class="lista-li"><button routerLink='/cultivos'>Cultivos</button></li>
+                <li class="lista-li active"><button routerLink='/insumos'>Insumos</button></li>
+                <li class="lista-li"><button routerLink ='/vista-reportes'>Reportes</button></li>
+            </ul>
+        </div>
+        
+        <div class="content-area">
+            <!-- Sección de controles -->
+            <div class="controls-section">
+                <button id="addBtn" class="add-button">
+                    <i class='bx bx-plus'></i>
+                    Nuevo Insumo
+                </button>
+                
+                <div class="search-filters">
+                    <input type="text" id="filtroProducto" class="filter-input" placeholder="Buscar por producto...">
+                    <input type="text" id="filtroProveedor" class="filter-input" placeholder="Buscar por proveedor...">
+                    <input type="date" id="filtroFechaDesde" class="filter-input" placeholder="Fecha desde">
+                    <input type="date" id="filtroFechaHasta" class="filter-input" placeholder="Fecha hasta">
+                    <button id="btnFiltrar" class="btn btn-primary" style="padding: 10px 16px;">
+                        <i class='bx bx-search'></i>
+                    </button>
+                    <button id="btnLimpiarFiltros" class="btn btn-secondary" style="padding: 10px 16px;">
+                        <i class='bx bx-x'></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Formulario para crear/editar insumo -->
+            <div id="formContainer" class="form-container">
+                <h3 class="form-title">
+                    <i class='bx bx-edit'></i>
+                    Datos del Insumo
+                </h3>
+                
+                <form id="insumoForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="producto">Producto *</label>
+                            <input type="text" id="producto" class="form-input" 
+                                    maxlength="50" required placeholder="Nombre del producto">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="proveedor">Proveedor *</label>
+                            <input type="text" id="proveedor" class="form-input" 
+                                    maxlength="50" required placeholder="Nombre del proveedor">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cantidad">Cantidad Usada *</label>
+                            <input type="number" id="cantidad" class="form-input" 
+                                    step="0.01" min="0" max="999999.99" required 
+                                    placeholder="0.00">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="medida">Unidad de Medida *</label>
+                            <select id="medida" class="form-select" required>
+                                <option value="">Seleccionar unidad</option>
+                                <option value="unidades">Unidades</option>
+                                <option value="kilogramos">Kilogramos</option>
+                                <option value="gramos">Gramos</option>
+                                <option value="litros">Litros</option>
+                                <option value="mililitros">Mililitros</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="costo">Costo *</label>
+                            <input type="number" id="costo" class="form-input" 
+                                    step="0.01" min="0" max="999999.99" required 
+                                    placeholder="0.00">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fecha">Fecha de Uso *</label>
+                            <input type="date" id="fecha" class="form-input" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="cancelBtn" class="btn btn-secondary">
+                            <i class='bx bx-x'></i>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class='bx bx-save'></i>
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Lista de insumos -->
+            <div id="lista-insumos" class="insumos-list">
+                <!-- Los insumos se cargarán dinámicamente aquí -->
+                <div class="empty-state">
+                    <i class='bx bx-package'></i>
+                    <h3>Cargando insumos...</h3>
+                    <p>Por favor espera mientras se cargan los datos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

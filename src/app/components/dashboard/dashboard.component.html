@@ -1,0 +1,634 @@
+<!-- PANEL PARA OBSERVAR SI ESTA CONECTADO AL DISPOSITIVO -->
+
+<!-- <div class="bg-red-50 border border-red-200 p-4 mb-4" *ngIf="true">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center">
+            <h3 class="text-sm font-bold text-red-800">Panel Debug Errores</h3>
+            <button 
+                (click)="showDebugDetails = !showDebugDetails"
+                class="text-xs text-red-600 hover:text-red-800">
+                {{ showDebugDetails ? 'Ocultar' : 'Mostrar' }} Detalles
+            </button>
+        </div>
+    
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2 text-xs">
+            <div>
+                <span class="font-semibold">WebSocket:</span>
+                <span [class]="connected ? 'text-green-600' : 'text-red-600'">
+                    {{ connected ? 'Conectado' : 'Desconectado' }}
+                </span>
+            </div>
+            <div>
+                <span class="font-semibold">Usuario:</span>
+                <span class="text-gray-700">{{ user?.email || 'No encontrado' }}</span>
+            </div>
+            <div>
+                <span class="font-semibold">Dispositivo:</span>
+                <span class="text-gray-700">{{ selectedDevice?.deviceCode || 'Ninguno' }}</span>
+            </div>
+            <div>
+                <span class="font-semibold">Datos:</span>
+                <span class="text-gray-700">{{ sensorData.length }} registros</span>
+            </div>
+        </div>
+    
+        <div *ngIf="showLogoutConfirm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 max-w-sm mx-4">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Confirmar cierre de sesión</h3>
+        <p class="text-sm text-gray-600 mb-6">¿Estás seguro de que deseas cerrar tu sesión?</p>
+        <div class="flex justify-end space-x-3">
+            <button 
+                (click)="cancelLogout()" 
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Cancelar
+            </button>
+            <button 
+                (click)="confirmLogout()" 
+                class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                Cerrar sesión
+            </button>
+        </div>
+    </div>
+</div> -->
+
+<!-- sensor-dashboard.component.html -->
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-2xl font-bold text-gray-900">
+                        Dashboard
+                    </h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-user text-gray-500"></i>
+                        <span class="text-sm text-gray-700" *ngIf="user">
+                            {{ user.email }}
+                        </span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i [class]="connected ? 'fas fa-wifi text-green-500' : 'fas fa-wifi-slash text-red-500'"></i>
+                        <span [class]="connected ? 'text-green-600' : 'text-red-600'" class="text-sm font-medium">
+                            {{ connected ? 'Conectado' : 'Desconectado' }}
+                        </span>
+                    </div>
+                    <button 
+                        (click)="showLogoutConfirmation()"
+                        class="p-2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                        title="Cerrar Sesión">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Sidebar - Lista de Dispositivos -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900">
+                            Mis Dispositivos
+                        </h2>
+                        <button
+                            (click)="openLinkDeviceModal()"
+                            class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            title="Agregar Dispositivo">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+
+                    <!-- Loading -->
+                    <div *ngIf="loading" class="text-center py-4">
+                        <i class="fas fa-spinner fa-spin text-gray-400"></i>
+                        <p class="text-sm text-gray-500 mt-2">Cargando dispositivos...</p>
+                    </div>
+
+                    <!-- Device List -->
+                    <div class="space-y-3" *ngIf="!loading">
+                        <div
+                            *ngFor="let device of devices"
+                            [class]="'p-3 rounded-lg border-2 cursor-pointer transition-all ' + 
+                                    (selectedDevice?.deviceCode === device.deviceCode 
+                                        ? 'border-blue-500 bg-blue-50' 
+                                        : 'border-gray-200 hover:border-gray-300')"
+                            (click)="selectDevice(device)">
+
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-medium text-gray-900 truncate">
+                                    {{ device.deviceName }}
+                                </h3>
+                                <i [class]="getDeviceStatus(device).status === 'Online' 
+                                        ? 'fas fa-wifi text-green-500' 
+                                        : 'fas fa-wifi-slash text-red-500'"></i>
+                            </div>
+
+                            <p class="text-xs text-gray-500 mb-1">
+                                {{ device.deviceCode }}
+                            </p>
+                            <div class="flex items-center justify-between">
+                                <span 
+                                    [class]="'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ' + 
+                                        getDeviceStatus(device).bg + ' ' + getDeviceStatus(device).color">
+                                    {{ getDeviceStatus(device).status }}
+                                </span>
+                                <span 
+                                    [class]="'text-xs font-medium ' + getBatteryColor(device.batteryLevel || 0)"
+                                    *ngIf="device.batteryLevel">
+                                    🔋 {{ device.batteryLevel }}%
+                                </span>
+                            </div>
+
+                            <p class="text-xs text-gray-400 mt-1" *ngIf="device.lastSeen">
+                                Visto: {{ formatTime(device.lastSeen) }}
+                            </p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div *ngIf="devices.length === 0" class="text-center py-8">
+                            <i class="fas fa-microchip text-gray-300 text-4xl mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">
+                                Sin dispositivos
+                            </h3>
+                            <p class="text-gray-500 text-sm mb-4">
+                                Agrega tu primer dispositivo ESP32
+                            </p>
+                            <button
+                                (click)="openLinkDeviceModal()"
+                                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <i class="fas fa-plus mr-2"></i>
+                                Agregar Dispositivo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content - Dashboard del Dispositivo Seleccionado -->
+            <div class="lg:col-span-3">
+                <div *ngIf="selectedDevice" class="space-y-6">
+                    <!-- Device Info con controles de período histórico -->
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h2 class="text-xl font-semibold text-gray-900 mb-2">
+                                    {{ selectedDevice.deviceName }}
+                                </h2>
+                                <p class="text-gray-500 text-sm">
+                                    Código: {{ selectedDevice.deviceCode }} • 
+                                    <span [class]="connected ? 'text-green-600' : 'text-red-600'">
+                                        {{ connected ? 'Conectado en tiempo real' : 'Desconectado' }}
+                                    </span>
+                                </p>
+                                <p class="text-xs text-gray-400 mt-1" *ngIf="latestData">
+                                    Última actualización: {{ formatDateTime(latestData.timestamp) }}
+                                </p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm text-gray-500">Batería</div>
+                                <div [class]="'text-lg font-semibold ' + getBatteryColor(selectedDevice.batteryLevel || 0)">
+                                    {{ selectedDevice.batteryLevel || 0 }}%
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Controles de Período Histórico -->
+                        <div class="border-t pt-4">
+                            <div class="flex flex-wrap items-center justify-between gap-4">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm font-medium text-gray-700">Período:</span>
+                                    <div class="flex space-x-1">
+                                        <button
+                                            (click)="changeHistoricalPeriod(1)"
+                                            [class]="'px-3 py-1 text-xs rounded-md transition-colors ' + 
+                                                    (historicalDataPeriod === 1 ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200')">
+                                            1h
+                                        </button>
+                                        <button
+                                            (click)="changeHistoricalPeriod(6)"
+                                            [class]="'px-3 py-1 text-xs rounded-md transition-colors ' + 
+                                                    (historicalDataPeriod === 6 ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200')">
+                                            6h
+                                        </button>
+                                        <button
+                                            (click)="changeHistoricalPeriod(24)"
+                                            [class]="'px-3 py-1 text-xs rounded-md transition-colors ' + 
+                                                    (historicalDataPeriod === 24 ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200')">
+                                            24h
+                                        </button>
+                                        <button
+                                            (click)="changeHistoricalPeriod(72)"
+                                            [class]="'px-3 py-1 text-xs rounded-md transition-colors ' + 
+                                                    (historicalDataPeriod === 72 ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200')">
+                                            3d
+                                        </button>
+                                        <button
+                                            (click)="changeHistoricalPeriod(168)"
+                                            [class]="'px-3 py-1 text-xs rounded-md transition-colors ' + 
+                                                    (historicalDataPeriod === 168 ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200')">
+                                            7d
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center space-x-3">
+                                    <!-- Indicador de carga -->
+                                    <div *ngIf="isLoadingHistoricalData" class="flex items-center space-x-2 text-sm text-gray-500">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <span>Cargando...</span>
+                                    </div>
+                                    
+                                    <!-- Información de datos -->
+                                    <div class="text-xs text-gray-500">
+                                        {{ sensorData.length }} registros
+                                    </div>
+                                    
+                                    <!-- Botón refresh -->
+                                    <button
+                                        (click)="refreshHistoricalData()"
+                                        [disabled]="isLoadingHistoricalData"
+                                        class="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 focus:outline-none"
+                                        title="Actualizar datos históricos">
+                                        <i [class]="'fas fa-sync-alt ' + (isLoadingHistoricalData ? 'fa-spin' : '')"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sensor Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Temperatura Ambiente -->
+                        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">
+                                        Temp. Ambiente
+                                    </h3>
+                                    <div class="mt-2 flex items-baseline">
+                                        <p class="text-3xl font-bold text-red-600">
+                                            {{ latestData?.temperaturaAmbiente?.toFixed(1) || '--' }}
+                                        </p>
+                                        <span class="ml-2 text-lg text-gray-500">°C</span>
+                                    </div>
+                                </div>
+                                <i class="fas fa-thermometer-half text-red-500 text-2xl"></i>
+                            </div>
+                        </div>
+
+                        <!-- Humedad Ambiente -->
+                        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">
+                                        Hum. Ambiente
+                                    </h3>
+                                    <div class="mt-2 flex items-baseline">
+                                        <p class="text-3xl font-bold text-blue-600">
+                                            {{ latestData?.humedadAmbiente?.toFixed(1) || '--' }}
+                                        </p>
+                                        <span class="ml-2 text-lg text-gray-500">%</span>
+                                    </div>
+                                </div>
+                                <i class="fas fa-tint text-blue-500 text-2xl"></i>
+                            </div>
+                        </div>
+
+                        <!-- Temperatura Suelo -->
+                        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-orange-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">
+                                        Temp. Suelo
+                                    </h3>
+                                    <div class="mt-2 flex items-baseline">
+                                        <p class="text-3xl font-bold text-orange-600">
+                                            {{ latestData?.temperaturaSuelo?.toFixed(1) || '--' }}
+                                        </p>
+                                        <span class="ml-2 text-lg text-gray-500">°C</span>
+                                    </div>
+                                </div>
+                                <i class="fas fa-thermometer-half text-orange-500 text-2xl"></i>
+                            </div>
+                        </div>
+
+                        <!-- Humedad Suelo -->
+                        <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">
+                                        Hum. Suelo
+                                    </h3>
+                                    <div class="mt-2 flex items-baseline">
+                                        <p class="text-3xl font-bold text-green-600">
+                                            {{ latestData?.humedadSuelo?.toFixed(1) || '--' }}
+                                        </p>
+                                        <span class="ml-2 text-lg text-gray-500">%</span>
+                                    </div>
+                                    <div *ngIf="latestData" class="mt-2">
+                                        <span 
+                                            [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + 
+                                                    getHumedadSueloStatus(latestData.humedadSuelo).bg + ' ' + 
+                                                    getHumedadSueloStatus(latestData.humedadSuelo).color">
+                                            {{ getHumedadSueloStatus(latestData.humedadSuelo).status }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <i class="fas fa-seedling text-green-500 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Temperature Chart -->
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">
+                                    Temperatura ({{ historicalDataPeriod }}h)
+                                </h3>
+                                <div *ngIf="isLoadingHistoricalData" class="flex items-center text-sm text-gray-500">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>
+                                    Cargando...
+                                </div>
+                            </div>
+                            <div class="relative" style="height: 300px;">
+                                <canvas id="temperatureChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Humidity Chart -->
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">
+                                    Humedad ({{ historicalDataPeriod }}h)
+                                </h3>
+                                <div *ngIf="isLoadingHistoricalData" class="flex items-center text-sm text-gray-500">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>
+                                    Cargando...
+                                </div>
+                            </div>
+                            <div class="relative" style="height: 300px;">
+                                <canvas id="humidityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Data Table con scroll para todos los datos -->
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <div style="background-color: #ffe5e5; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                                <h2 style="color: #000000; font-weight: bold; text-align: center;">
+                                    Los sensores operan de 6:00am - 9:00am / 11:00am - 2:00pm / 4:00pm - 8:00pm
+                                </h2>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-xl font-semibold text-gray-800">
+                                    Datos Históricos
+                                </h2>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-sm text-gray-500">
+                                        {{ sensorData.length }} registros totales
+                                    </span>
+                                    <div *ngIf="isLoadingHistoricalData" class="flex items-center text-sm text-gray-500">
+                                        <i class="fas fa-spinner fa-spin mr-2"></i>
+                                        <span>Actualizando...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Contenedor con altura fija y scroll -->
+                        <div class="overflow-x-auto">
+                            <div class="max-h-96 overflow-y-auto data-table-container">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50 sticky top-0 z-10">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Tiempo
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Temp. Ambiente
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Humedad Ambiente
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Temp. Suelo
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Humedad Suelo
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Batería
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <!-- Cambio clave: usar todos los datos en orden inverso (más reciente primero) -->
+                                        <tr 
+                                            *ngFor="let data of sensorData.slice().reverse(); let i = index"
+                                            [class]="i === 0 ? 'bg-green-50 border-l-4 border-green-500' : (i % 2 === 1 ? 'bg-gray-50' : '')">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                <div class="text-gray-900 font-medium">
+                                                    {{ formatTime(data.timestamp) }}
+                                                </div>
+                                                <div class="text-xs text-gray-500">
+                                                    {{ formatDate(data.timestamp) }}
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
+                                                {{ data.temperaturaAmbiente.toFixed(1) || '--' }}°C
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
+                                                {{ data.humedadAmbiente.toFixed(1) || '--' }}%
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">
+                                                {{ data.temperaturaSuelo.toFixed(1) || '--' }}°C
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="text-sm text-gray-900 font-mono">
+                                                        {{ data.humedadSuelo.toFixed(1) || '--' }}%
+                                                    </span>
+                                                    <span 
+                                                        [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + 
+                                                            getHumedadSueloStatus(data.humedadSuelo || 0).bg + ' ' + 
+                                                            getHumedadSueloStatus(data.humedadSuelo || 0).color">
+                                                        {{ getHumedadSueloStatus(data.humedadSuelo || 0).status }}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span [class]="'text-sm font-medium font-mono ' + getBatteryColor(data.batteryLevel || 0)">
+                                                    {{ data.batteryLevel.toFixed(0) || '--' }}%
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <!-- Empty State -->
+                                        <tr *ngIf="sensorData.length === 0 && !isLoadingHistoricalData">
+                                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                                <i class="fas fa-chart-line text-gray-300 text-4xl mb-4"></i>
+                                                <div class="text-lg font-medium mb-2">No hay datos disponibles</div>
+                                                <div class="text-sm text-gray-400">
+                                                    Los datos aparecerán aquí cuando el dispositivo envíe información
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Loading State -->
+                                        <tr *ngIf="sensorData.length === 0 && isLoadingHistoricalData">
+                                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                                <i class="fas fa-spinner fa-spin text-gray-400 text-4xl mb-4"></i>
+                                                <div class="text-lg font-medium mb-2">Cargando datos históricos...</div>
+                                                <div class="text-sm text-gray-400">
+                                                    Obteniendo registros de los últimos {{ historicalDataPeriod }} horas
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Footer con información adicional -->
+                        <div class="px-6 py-3 bg-gray-50 border-t border-gray-200" *ngIf="sensorData.length > 0">
+                            <div class="flex justify-between items-center text-sm text-gray-600">
+                                <div>
+                                    Mostrando {{ sensorData.length }} registros ({{ historicalDataPeriod }}h)
+                                    <span *ngIf="sensorData.length >= maxDataPoints" class="text-yellow-600 ml-2">
+                                        • Límite alcanzado
+                                    </span>
+                                </div>
+                                <div *ngIf="latestData">
+                                    Última actualización: {{ formatDateTime(latestData.timestamp) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No Device Selected State -->
+                <div *ngIf="!selectedDevice && devices.length > 0" class="bg-white rounded-lg shadow p-8 text-center">
+                    <i class="fas fa-mouse-pointer text-gray-300 text-4xl mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">
+                        Selecciona un dispositivo
+                    </h3>
+                    <p class="text-gray-500">
+                        Elige un dispositivo de la lista para ver sus datos históricos y en tiempo real
+                    </p>
+                </div>
+
+                <!-- No Devices State -->
+                <div *ngIf="!selectedDevice && devices.length === 0 && !loading" class="bg-white rounded-lg shadow p-8 text-center">
+                    <i class="fas fa-microchip text-gray-300 text-5xl mb-4"></i>
+                    <h3 class="text-xl font-medium text-gray-900 mb-2">
+                        Bienvenido a Greentech
+                    </h3>
+                    <p class="text-gray-500 mb-6">
+                        Agrega tu primer dispositivo para comenzar a monitorear tu cultivo
+                    </p>
+                    <button
+                        (click)="openLinkDeviceModal()"
+                        class="inline-flex items-center px-6 py-3 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i class="fas fa-plus mr-2"></i>
+                        Agregar Primer Dispositivo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para vincular dispositivo -->
+<div 
+    *ngIf="showLinkDevice" 
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+    (click)="closeLinkDeviceModal()">
+
+    <div 
+        class="bg-white rounded-lg max-w-md w-full p-6 relative"
+        (click)="$event.stopPropagation()">
+
+        <!-- Close button -->
+        <button 
+            (click)="closeLinkDeviceModal()"
+            class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                <i class="fas fa-link mr-2 text-blue-600"></i>
+                Vincular Nuevo Dispositivo
+            </h3>
+            <p class="text-sm text-gray-600">
+                Introduce el código que aparece en la pantalla de tu dispositivo ESP32
+            </p>
+        </div>
+
+        <div class="space-y-4">
+            <!-- Device Code Input -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Código del Dispositivo <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="text"
+                    placeholder="ABC12345"
+                    [(ngModel)]="deviceCode"
+                    (input)="deviceCode = deviceCode.toUpperCase()"
+                    maxlength="8"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase text-center text-lg font-mono tracking-wider"
+                    pattern="[A-Z0-9]{8}"
+                    required>
+                <div class="flex items-center mt-2 text-xs text-gray-500">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Código de 8 caracteres mostrado en tu ESP32
+                </div>
+            </div>
+
+            <!-- Device Name Input -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Nombre del Dispositivo <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="text"
+                    placeholder="Ej: Jardín Principal, Invernadero, Huerto..."
+                    [(ngModel)]="deviceName"
+                    maxlength="50"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required>
+                <div class="flex items-center mt-2 text-xs text-gray-500">
+                    <i class="fas fa-tag mr-1"></i>
+                    Dale un nombre descriptivo para identificarlo fácilmente
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end space-x-3 mt-8 pt-4 border-t">
+            <button
+                (click)="closeLinkDeviceModal()"
+                class="px-4 py-2 text-gray-600 hover:text-gray-800 focus:outline-none">
+                Cancelar
+            </button>
+            <button
+                (click)="linkDevice()"
+                [disabled]="!deviceCode.trim() || !deviceName.trim()"
+                class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+                <i class="fas fa-link mr-2"></i>
+                Vincular Dispositivo
+            </button>
+        </div>
+    </div>
+</div>
+
+<app-agenda-view></app-agenda-view>

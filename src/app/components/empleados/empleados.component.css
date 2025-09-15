@@ -1,0 +1,409 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    color: black;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    font-family: Arial, sans-serif;
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.title-empleados {
+    font-size: 30px;
+    font-weight: 500;
+    color: #4a5568;
+    text-align: center;
+    margin: 30px 0;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 15px;
+}
+
+/* Contenedor de la barra de búsqueda */
+#barraBusqueda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+/* Inputs y select */
+#barraBusqueda input[type="text"],
+#barraBusqueda select {
+    padding: 10px 14px;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+    min-width: 300px;
+    flex-grow: 3;
+    margin-right: 10px;
+    margin-left: 4px;
+}
+
+#barraBusqueda input[type="text"]:focus,
+#barraBusqueda select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Botón Buscar */
+#barraBusqueda button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 11px 24px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+#barraBusqueda button:hover {
+    background-color: #0056b3;
+}
+
+/* Tabla de resultados */
+#resultados table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+#resultados th,
+#resultados td {
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    text-align: left;
+}
+
+#resultados thead tr {
+    background-color: #f8f9fa;
+}
+
+#resultados tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Botones dentro de la tabla */
+#resultados button {
+    border: none;
+    padding: 6px 12px;
+    margin-right: 5px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#resultados button.editar {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+#resultados button.editar:hover {
+    background-color: #e0a800;
+}
+
+#resultados button.eliminar {
+    background-color: #dc3545;
+    color: white;
+}
+
+#resultados button.eliminar:hover {
+    background-color: #b02a37;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    #barraBusqueda {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    #barraBusqueda input[type="text"],
+    #barraBusqueda select,
+    #barraBusqueda button {
+        min-width: auto;
+        width: 100%;
+        margin-right: 6px;
+        margin-left: 3px;
+    }
+    
+    #resultados table,
+    #resultados thead,
+    #resultados tbody,
+    #resultados th,
+    #resultados td,
+    #resultados tr {
+        display: block;
+        width: 100%;
+    }
+    
+    #resultados thead tr {
+        display: none;
+    }
+    
+    #resultados tbody tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 10px;
+    }
+    
+    #resultados tbody td {
+        border: none;
+        padding: 6px 10px;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+    }
+    
+    #resultados tbody td::before {
+        position: absolute;
+        top: 6px;
+        left: 10px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+        content: attr(data-label);
+    }
+}
+
+.contenedor-buscar {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.btn-buscar {
+    background: linear-gradient(135deg, #1b1f3b, #0d0f1a);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-buscar:hover {
+    background: linear-gradient(135deg, #2a2f57, #121520);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.btn-buscar:active {
+    transform: translateY(0px);
+    box-shadow: none;
+}
+
+.btn-limpiar {
+    background: linear-gradient(135deg, #1b9aaa, #107b82);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-limpiar:hover {
+    background: linear-gradient(135deg, #27bfc9, #139ca3);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.btn-limpiar:active {
+    transform: translateY(0px);
+    box-shadow: none;
+}
+/* --------------------------------------Hasta aqui es la parte de la barra de busqueda ----------------------------------- */
+
+
+.container-cards {
+    border-radius: 8px;
+    background: #2222;
+    padding-top: 30px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 70vh;
+    max-width: 75%;
+    min-width: 360px;
+    margin: auto;
+    margin-bottom: 10px;
+}
+
+.card {
+    text-align: justify;
+    width: 60%;
+    border-radius: 8px;
+    padding: 30px;
+    display: inline-block;
+    margin: auto;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+
+/* Estilos para el formulario */
+.form-container {
+    display: none;
+    max-width: 60%;
+    min-width: 360px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.form-container.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.save-btn, .cancel-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.save-btn {
+    background-color: rgba(0, 148, 128, 0.7);
+    color: white;
+    font-weight: bold;
+}
+
+.save-btn:hover {
+    background-color: rgba(0, 148, 128, 1);
+    font-weight: bold;
+}
+
+.cancel-btn {
+    background-color:#f28b82;
+    border: 1px solid #ddd;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.cancel-btn:hover {
+    background-color: #e57373;
+    font-weight: bold;
+}
+
+
+/* ----------------------------boton añadir empleado ------------------------------ */
+.btn-add {
+    margin: 5px 0;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 10px;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+}
+
+.btn i {
+    font-size: 18px;
+    color: white;
+}
+
+.text-btn {
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+/* Efecto de brillo al hover */
+.btn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: rotate(45deg);
+    transition: all 0.6s;
+    opacity: 0;
+}
+
+.btn:hover::before {
+    opacity: 1;
+    left: 100%;
+}

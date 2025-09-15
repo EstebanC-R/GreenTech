@@ -1,0 +1,348 @@
+/* Importing Google Fonts - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+* {
+    font-family: "Poppins", serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(#F1FAFF, #CBE4FF);
+}
+
+.sidebar {
+    width: 270px;
+    position: fixed;
+    margin: 16px;
+    border-radius: 16px;
+    background: #151A2D;
+    height: calc(100vh - 15px);
+    transition: 0.4s ease;
+    z-index: 1000;
+}
+
+.sidebar.collapsed {
+    width: 85px;
+}
+
+.sidebar-header {
+    position: relative;
+    display: flex;
+    padding: 25px 20px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sidebar-header .header-logo img {
+    width: 46px;
+    height: 46px;
+    display: block;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.sidebar-header .toggler {
+    height: 35px;
+    width: 35px;
+    border: none;
+    color: #151A2D;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px;
+    background: #fff;
+    transition: 0.4s ease;
+}
+
+.sidebar-header .sidebar-toggler {
+    position: absolute;
+    right: 20px;
+}
+
+.sidebar.collapsed .sidebar-header .sidebar-toggler {
+    transform: translate(-4px, 65px);
+}
+
+.sidebar-header .toggler:hover {
+    background: #dde4fb;
+}
+
+.sidebar-header .menu-toggler {
+    display: none;
+}
+
+.sidebar-header .sidebar-toggler span {
+    font-size: 1.75rem;
+    transition: 0.4s ease;
+}
+
+.sidebar.collapsed .sidebar-header .sidebar-toggler span {
+    transform: rotate(180deg);
+}
+
+.sidebar-nav .nav-list {
+    list-style: none;
+    display: flex;
+    gap: 4px;
+    padding: 0 15px;
+    flex-direction: column;
+    transform: translateY(15px);
+    transition: 0.4s ease;
+}
+
+
+/* Esto es con lo que molesta manuela a cada rato ush */
+.sidebar.collapsed .sidebar-nav .primary-nav{
+    transform: translateY(45px);
+}
+
+.sidebar-nav .nav-link {
+    color: #fff;
+    display: flex;
+    gap: 12px;
+    white-space: nowrap;
+    border-radius: 8px;
+    align-items: center;
+    padding: 12px 15px;
+    text-decoration: none;
+    transition: 0.4 ease;
+}
+
+.sidebar-nav .nav-link:hover {
+    color: #151A2D;
+    background: #fff;
+}
+
+.sidebar-nav .nav-link .nav-label {
+    transition: opacity 0.4 ease;
+}
+
+.sidebar.collapsed .sidebar-nav .nav-link .nav-label {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sidebar-nav .nav-item {
+    position: relative;
+}
+
+.sidebar-nav .nav-tooltip {
+    position: absolute;
+    top: -10px;
+    opacity: 0;
+    display: none;
+    pointer-events: none;
+    left: calc(100% + 25px);
+    color: #151A2D;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #fff;
+    white-space: nowrap;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    transition: 0s;
+}
+
+.sidebar.collapsed .sidebar-nav .nav-tooltip {
+    display: block;
+}
+
+.sidebar-nav .nav-item:hover .nav-tooltip {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(50%);
+    transition: 0.4s ease;
+}
+
+.sidebar-nav .secondary-nav {
+    position: absolute;
+    bottom: 30px;
+    width: 100%;
+}
+
+.layout-container {
+    margin: 0;
+    padding: 0;
+    margin-top: -10px;
+    width: 100%;
+}
+
+.main-content{
+    padding-top: 65px;
+    padding-left: 110px;
+    height: 100vh;
+}
+
+
+/* Modal de confirmación */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 0;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-header {
+    padding: 24px 24px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.modal-header h3 {
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-body p {
+    margin: 0 0 12px 0;
+    color: #495057;
+    line-height: 1.5;
+}
+
+.modal-subtitle {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.modal-actions {
+    padding: 0 24px 24px;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.btn-cancel, .btn-confirm {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-cancel {
+    background: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dee2e6;
+}
+
+.btn-cancel:hover {
+    background: #e9ecef;
+}
+
+.btn-confirm {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background: #c82333;
+}
+
+@media (max-width: 1023px){
+    .sidebar {
+        height: 56px;
+        margin: 13px;
+        overflow: hidden;
+        scrollbar-width: none;
+        width: calc(100% - 24px);
+        max-height: calc(100vh - 28px);
+    }
+
+    .sidebar-header {
+        position: sticky;
+        top: 0;
+        z-index: 20px;
+        background: #151A2D;
+        padding: 8px 10px;
+        border-radius: 16px;
+    }
+
+    .sidebar-header .header-logo img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .sidebar-header .sidebar-toggler {
+        display: none;
+    }
+
+    .sidebar-header .menu-toggler {
+        display: flex;
+        height: 30px;
+        width: 30px;
+    }
+
+    .sidebar-header .menu-toggler span {
+        font-size: 1.3rem;
+    }
+
+    .sidebar-nav .nav-link {
+        padding: 0px 10px;
+    }
+
+    .sidebar-nav .nav-link {
+        gap: 10px;
+        padding: 10px;
+        font-size: 0.94rem;
+    }
+
+    .sidebar-nav .nav-link .nav-icon {
+        font-size: 1.37rem;
+    }
+
+    .sidebar-nav .secondary-nav {
+        position: relative;
+        bottom: 0;
+        margin: 40px 0 30px;
+    }
+
+    .main-content{
+        padding-top: 65px;
+        padding-left: 2%;
+        padding-right: 2%;
+        height: 100vh;
+    }
+
+}
+
+

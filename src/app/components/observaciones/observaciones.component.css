@@ -1,0 +1,417 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    color: black;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    font-family: Arial, sans-serif;
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.title-observaciones {
+    font-size: 30px;
+    font-weight: 500;
+    color: #4a5568;
+    text-align: center;
+    margin: 30px 0;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 15px;
+}
+.container-cards {
+    border-radius: 8px;
+    background: #2222;
+    padding-top: 30px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 70vh;
+    max-width: 60%;
+    min-width: 360px;
+    margin: auto;
+    margin-bottom: 30px;
+}
+
+.card {
+    text-align: justify;
+    background-color: rgb(105, 148, 204);
+    width: 60%;
+    box-shadow: 0 0 25px rgb(0, 0, 0, 0.5);
+    border-radius: 8px;
+    padding: 30px;
+    display: inline-block;
+    margin: auto;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+/* Esto hace parte de el TypeScript, por ello no aparece en el html */
+ul.observacion-container {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+li {
+    margin-bottom: 15px;
+}
+
+.title-card {
+    padding-bottom: 20px;
+    font-weight:700;
+    display: inline;
+}
+
+.text-card {
+    font-size: 20px;
+    font-weight: 100;
+    display: inline;
+}
+
+.blue-cake {
+    background-color: rgba(0, 128, 255, 0.5);
+}
+
+.blue-cake {
+    margin-bottom: 20px;
+}
+
+#lista-observaciones {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: transparent;
+    box-shadow: none;
+    width: 100%; 
+    margin: auto; 
+}
+
+
+#lista-observaciones .card {
+    margin: 0 auto 20px auto;
+    width: 90%;
+}
+
+/* --------------------------------Barra Busqueda-------------------------------- */
+
+/* Estilos para el contenedor de búsqueda */
+.search-container {
+    width: 60%;
+    margin: 0 auto 20px auto;
+    padding: 15px 20px;
+    background-color: #f0f8ff;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+  /* Título de la búsqueda */
+.search-container h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+  /* Contenedor de controles de búsqueda */
+.search-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+  /* Grupos de input */
+.search-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+  /* Etiquetas de los campos */
+.search-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+  /* Entradas de texto y fecha */
+.search-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.search-group input:focus {
+    outline: none;
+    border-color: #4285F4;
+    box-shadow: 0 0 3px rgba(66, 133, 244, 0.5);
+}
+
+  /* Grupo de botones */
+.search-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+ /* Botón de búsqueda */
+.btn-search {
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.btn-search:hover {
+    background-color: #3b78e7;
+}
+
+  /* Botón de reset */
+.btn-reset {
+    background-color: #757575;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.btn-reset:hover {
+    background-color: #616161;
+}
+
+  /* Mensaje de sin resultados */
+.no-results {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.no-results h3 {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+  /* Estilos para tarjetas (complementa tu CSS existente) */
+.card.blue-cake {
+    background-color: #D3F2E3;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    padding: 30px;
+    width: 60%;
+    margin: 0 auto 20px auto;
+    text-align: left;
+}
+
+  /* Estilos para los botones de acción */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-update {
+    background-color: #4CAF50;
+    color: #FFF;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-update:hover {
+    background-color: #45a049;
+}
+
+.btn-delete {
+    background-color: #FF6B6B;
+    color: #FFF;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-delete:hover {
+    background-color: #FF3333;
+}
+
+  /* Estilos responsivos */
+@media (max-width: 768px) {
+    .search-container, .card.blue-cake {
+        width: 85%;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-container, .card.blue-cake {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .search-buttons {
+        flex-direction: column;
+    }
+
+    .btn-search, .btn-reset {
+        width: 100%;
+    }
+}
+
+
+/* --------------------------------------- Añadir Observación --------------------------------------*/
+.btn-add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh;
+    margin-bottom: 20px;
+}
+
+.btn {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 20px;
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+    transition: all 0.2s ease;
+    font-size: 15px;
+    min-width: 180px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto de brillo más suave */
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.6s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25);
+    color: white;
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.text-btn {
+    display: inline;
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+}
+
+.bx {
+    padding-right: 8px;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.btn:hover .bx {
+    transform: scale(1.05);
+}
+
+/* Estilos para el formulario */
+.form-container {
+    display: none;
+    max-width: 60%;
+    min-width: 360px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.form-container.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.save-btn, .cancel-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.save-btn {
+    background-color: rgba(0, 148, 128, 0.7);
+    color: white;
+    font-weight: bold;
+}
+
+.save-btn:hover {
+    background-color: rgba(0, 148, 128, 1);
+    font-weight: bold;
+}
+
+.cancel-btn {
+    background-color:#f28b82;
+    border: 1px solid #ddd;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.cancel-btn:hover {
+    background-color: #e57373;
+    font-weight: bold;
+}

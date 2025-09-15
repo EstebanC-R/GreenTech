@@ -1,0 +1,107 @@
+<div class="container">
+    <!-- Barra de Busqueda -->
+    <h2 class="title-empleados">Gestion de Empleados</h2>
+    
+    <div id="barraBusqueda">
+        <input type="text" id="buscarNombre" placeholder="Buscar por nombre">
+        <input type="text" id="buscarCedula" placeholder="Buscar por cédula">
+        <select id="buscarEstado">
+            <option value="">Todos</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+            <option value="Suspendido">Suspendido</option>
+        </select>
+    </div>
+
+    <div class="contenedor-buscar">
+        <button class="btn-buscar" (click)="buscar()">Buscar</button>
+        <button class="btn-limpiar" (click)="limpiar()">Limpiar</button>
+    </div>
+    
+    <div id="resultados"></div>
+
+    <!-- Loading y mensajes -->
+    <div class="loading" id="loading"></div> <!-- Se iba a poner un mensaje que dijera como cargando, pero la verdad queda feito -->
+    <div id="mensajes"></div>
+
+    <!-- Lista de Empleados -->
+    <div class="container-cards" id="containerCards">
+        <div class="card blue-cake" id="lista-empleados">
+
+        </div>
+    </div>
+
+    <div class="form-container" id="formContainer">
+        <h3>Nuevo Empleado</h3>
+        <form id="empleadoForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required maxlength="50">
+            </div>
+
+            <div class="form-group">
+                <label for="asignacion">Asignación:</label>
+                <input type="text" id="asignacion" name="asignacion" required maxlength="50">
+            </div>
+            
+            <div class="form-group">
+                <label for="cedula">Cédula:</label>
+                <input type="text" id="cedula" name="cedula" required maxlength="10">
+            </div>
+            
+            <div class="form-group">
+                <label for="fechaNacimiento">Fecha de nacimiento:</label>
+                <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="fechaDeIngreso">Fecha de ingreso:</label>
+                <input type="date" id="fechaDeIngreso" name="fechaDeIngreso" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="celular">Celular:</label>
+                <input type="text" id="celular" name="celular" required maxlength="10">
+            </div>
+            
+            <div class="form-group">
+                <label for="correo">Correo:</label>
+                <input type="email" id="correo" name="correo" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" class="form-control" required>
+                    <option value="">Seleccione un estado</option>
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                    <option value="Suspendido">Suspendido</option>
+                </select>
+            </div>
+
+            <!-- ARCHIVOS PARA ENVIAR -->
+            <div class="form-group">
+                <label for="epsArchivo">Archivo EPS:</label>
+                <input type="file" id="epsArchivo" name="epsArchivo" accept=".pdf,.doc,.docx,.jpg,.png">
+            </div>
+
+            <div class="form-group">
+                <label for="estudiosArchivo">Archivo de Estudios:</label>
+                <input type="file" id="estudiosArchivo" name="estudiosArchivo" accept=".pdf,.doc,.docx,.jpg,.png">
+            </div>
+
+            <div class="form-buttons">
+                <button type="button" class="cancel-btn" id="cancelBtn">Cancelar</button>
+                <button type="submit" class="save-btn">Guardar</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="btn-add">
+        <div class="btn" id="addBtn">
+            <i class='bx bxs-plus-circle'></i>
+            <p class="text-btn">Añadir Empleado</p>
+        </div>
+    </div>
+</div>
+

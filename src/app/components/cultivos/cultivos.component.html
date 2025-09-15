@@ -1,0 +1,373 @@
+<div class="container">
+    <div class="layout-cultivos">
+        <h2 class="title-cultivos">
+            <span class="hoja"><i class='bxl bx-leaf'></i></span>
+            Cultivos
+        </h2>
+        
+        <div class="rutas-cultivos">
+            <ul class="lista">
+                <li class="lista-li active"><button routerLink="/cultivos">Cultivos</button></li>
+                <li class="lista-li"><button routerLink="/insumos">Insumos</button></li>
+                <li class="lista-li"><button routerLink="/vista-reportes">Reportes</button></li>
+            </ul>
+        </div>
+
+        <!-- Mensajes de éxito y error -->
+        <div *ngIf="success" class="alert alert-success">
+            {{ success }}
+        </div>
+
+        <div class="content-area">
+            <div class="content-header" *ngIf="isAdmin">
+                <button class="btn-primary" (click)="openCreateModal()">
+                    <i class='bx bx-plus'></i>
+                    Nuevo Cultivo
+                </button>
+            </div>
+            <!-- Spinner de carga -->
+            <div *ngIf="loading" class="loading-spinner">
+                <div class="spinner"></div>
+                Cargando cultivos...
+            </div>
+
+            <!-- Lista de cultivos -->
+            <div *ngIf="!loading" class="cultivos-grid">
+                <div *ngFor="let cultivo of cultivos" class="cultivo-card">
+                    <div class="card-header">
+                        <h3>{{ cultivo.nombreCultivo }}</h3>
+                        <span class="estado-badge" [class]="getEstadoClass(cultivo.estadoCultivo || '')">
+                            {{ getEstadoText(cultivo.estadoCultivo || '') }}
+                        </span>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="info-row">
+                            <span class="label">Tipo:</span>
+                            <span class="value">{{ cultivo.tipoDeCultivo }}</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="label">Fecha de plantación:</span>
+                            <span class="value">{{ formatDate(cultivo.fechaPlantacion || '') }}</span>
+                        </div>
+
+                        <div class="info-row" *ngIf="cultivo.produccionEstimada">
+                            <span class="label">Producción estimada:</span>
+                            <span class="value">{{ cultivo.produccionEstimada }} kg</span>
+                        </div>
+
+                        <div class="info-row" *ngIf="cultivo.deviceName">
+                            <span class="label">Dispositivo:</span>
+                            <span class="value">{{ cultivo.deviceName }} ({{ cultivo.deviceCode }})</span>
+                        </div>
+
+                        <!-- Parámetros ambientales -->
+                        <div class="parametros-section" *ngIf="cultivo.humedadSueloMin || cultivo.temperaturaMin">
+                            <h4>Parámetros óptimos:</h4>
+                            <div class="parametros-grid">
+                                <div *ngIf="cultivo.humedadSueloMin && cultivo.humedadSueloMax">
+                                    <small>Humedad suelo:</small>
+                                    <span>{{ cultivo.humedadSueloMin }}% - {{ cultivo.humedadSueloMax }}%</span>
+                                </div>
+                                <div *ngIf="cultivo.temperaturaMin && cultivo.temperaturaMax">
+                                    <small>Temperatura:</small>
+                                    <span>{{ cultivo.temperaturaMin }}°C - {{ cultivo.temperaturaMax }}°C</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="descripcion" *ngIf="cultivo.descripcion">
+                            <span class="label">Descripción:</span>
+                            <p>{{ cultivo.descripcion }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Acciones (solo admin) -->
+                    <div class="card-actions" *ngIf="isAdmin">
+                        <button class="btn-edit" (click)="openEditModal(cultivo)">
+                            <i class='bx bx-edit'></i>
+                            Editar
+                        </button>
+                        <button class="btn-delete" (click)="openDeleteModal(cultivo)">
+                            <i class='bx bx-trash'></i>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mensaje cuando no hay cultivos -->
+                <div *ngIf="cultivos.length === 0" class="no-data">
+                    <i class='bx bx-leaf'></i>
+                    <h3>No hay cultivos registrados</h3>
+                    <p *ngIf="isAdmin">Comienza creando tu primer cultivo</p>
+                    <p *ngIf="!isAdmin">No tienes acceso a cultivos o tu administrador no ha creado ninguno</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear/editar cultivo -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>{{ modalMode === 'create' ? 'Nuevo Cultivo' : 'Editar Cultivo' }}</h3>
+            <button class="close-btn" (click)="closeModal()">
+                <i class='bx bx-x'></i>
+            </button>
+        </div>
+
+        <form class="modal-form" (ngSubmit)="saveCultivo()">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nombreCultivo">Nombre del cultivo *</label>
+                    <input type="text" id="nombreCultivo" 
+                            [(ngModel)]="cultivoForm.nombreCultivo" 
+                            name="nombreCultivo" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipoDeCultivo">Tipo de cultivo</label>
+                    <select id="tipoDeCultivo" class="form-control"
+                            [(ngModel)]="cultivoFormExtendido.tipoDeCultivo"
+                            name="tipoDeCultivo"
+                            (change)="onTipoCultivoChange()">
+                        <option *ngFor="let tipo of tiposCultivo" [value]="tipo">{{ tipo }}</option>
+                    </select>
+                    
+                    <div class="form-group" *ngIf="cultivoFormExtendido.tipoDeCultivo === 'Otro'">
+                        <label for="tipoCultivoPersonalizado">Especifique el tipo de cultivo</label>
+                        <input id="tipoCultivoPersonalizado"
+                                class="form-control"
+                                [(ngModel)]="tipoCultivoPersonalizado"
+                                name="tipoCultivoPersonalizado"
+                                placeholder="Ingrese el tipo de cultivo" />
+                    </div>
+
+                    <!-- Información adicional del cultivo -->
+                    <div class="cultivo-info" *ngIf="getTipoCultivoInfo(cultivoFormExtendido.tipoDeCultivo)">
+                        <small class="info-text">
+                            {{ getCultivoDescription() }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fechaPlantacion">Fecha de plantación</label>
+                    <input type="date" id="fechaPlantacion" 
+                            [(ngModel)]="cultivoForm.fechaPlantacion" 
+                            name="fechaPlantacion">
+                </div>
+
+                <div class="form-group">
+                    <label for="estadoCultivo">Estado</label>
+                    <select id="estadoCultivo" 
+                            [(ngModel)]="cultivoForm.estadoCultivo" 
+                            name="estadoCultivo">
+                        <option *ngFor="let estado of estadosCultivo" [value]="estado">
+                            {{ getEstadoText(estado) }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Nueva sección: Cálculo de producción -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h4>Producción estimada</h4>
+                    <div class="toggle-container" *ngIf="cultivoFormExtendido.tipoDeCultivo !== 'Otro'">
+                        <label class="toggle-label">
+                            <input type="checkbox"
+                                    [(ngModel)]="cultivoFormExtendido.calculoAutomatico"
+                                    name="calculoAutomatico"
+                                    (change)="toggleCalculoAutomatico()"
+                                    [disabled]="cultivoFormExtendido.tipoDeCultivo === 'Otro'">
+                            Cálculo automático
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Cálculo automático solo si NO es "Otro" -->
+                <div *ngIf="cultivoFormExtendido.calculoAutomatico && cultivoFormExtendido.tipoDeCultivo !== 'Otro'">
+                    <div *ngIf="error" class="alert alert-error" style="margin-top: 8px;">
+                        {{ error }}
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="hectareas">Hectáreas cultivadas *</label>
+                            <input type="number" id="hectareas" 
+                                    [(ngModel)]="cultivoFormExtendido.hectareas" 
+                                    name="hectareas" 
+                                    min="0.01" 
+                                    step="0.01"
+                                    (input)="calcularProduccionEstimada()" 
+                                    required>
+                        </div>
+                        <div class="form-group">
+                            <label for="numeroSemillas">Número de semillas (opcional)</label>
+                            <input type="number" id="numeroSemillas" 
+                                    [(ngModel)]="cultivoFormExtendido.numeroSemillas" 
+                                    name="numeroSemillas" 
+                                    min="0"
+                                    (input)="calcularProduccionEstimada()">
+                            <small class="help-text">Deja en 0 para usar densidad recomendada</small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="factorAjuste">Factor de ajuste</label>
+                            <select id="factorAjuste" 
+                                    [(ngModel)]="cultivoFormExtendido.factorAjuste" 
+                                    name="factorAjuste"
+                                    (change)="calcularProduccionEstimada()">
+                                <option value="0.7">Condiciones desfavorables (70%)</option>
+                                <option value="0.85">Condiciones regulares (85%)</option>
+                                <option value="1.0" selected>Condiciones normales (100%)</option>
+                                <option value="1.15">Condiciones buenas (115%)</option>
+                                <option value="1.3">Condiciones óptimas (130%)</option>
+                            </select>
+                            <small class="help-text">Ajusta según condiciones climáticas, suelo, etc.</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Producción calculada</label>
+                            <div class="calculated-production">
+                                <span class="production-value">{{ (cultivoFormExtendido.produccionEstimada || 0) | number:'1.0-0' }} kg</span>
+                                <span class="production-tons" *ngIf="(cultivoFormExtendido.produccionEstimada || 0) > 1000">
+                                    ({{ ((cultivoFormExtendido.produccionEstimada || 0) / 1000) | number:'1.1-1' }} ton)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campo manual si cálculo automático está desactivado o es "Otro" -->
+                <div class="manual-field" *ngIf="!cultivoFormExtendido.calculoAutomatico || cultivoFormExtendido.tipoDeCultivo === 'Otro'">
+                    <div class="form-group">
+                        <label for="produccionManual">Producción estimada manual (kg)</label>
+                        <input type="number" id="produccionManual" 
+                                [(ngModel)]="cultivoForm.produccionEstimada" 
+                                name="produccionEstimada" 
+                                min="0" 
+                                step="0.01"
+                                [required]="cultivoFormExtendido.tipoDeCultivo === 'Otro'">
+                        <small class="help-text" *ngIf="cultivoFormExtendido.tipoDeCultivo === 'Otro'">
+                            Ingresa la producción estimada según tu experiencia o información disponible.
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="deviceId">Dispositivo sensor (opcional)</label>
+                    <select id="deviceId" 
+                            [(ngModel)]="cultivoForm.deviceIdFk" 
+                            name="deviceIdFk">
+                        <option [value]="null">Sin dispositivo</option>
+                        <option *ngFor="let device of devices" [value]="device.id">
+                            {{ device.deviceName }} ({{ device.deviceCode }})
+                        </option>
+                    </select>
+                    <small class="help-text">Asocia un sensor para monitoreo en tiempo real</small>
+                </div>
+
+                <div class="form-group" *ngIf="devices.length === 0">
+                    <div class="no-devices-warning">
+                        <i class='bx bx-wifi-off'></i>
+                        <span>No hay dispositivos vinculados</span>
+                        <small>Ve a "Dispositivos" para vincular sensores</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parámetros ambientales -->
+            <div class="form-section">
+                <h4>Parámetros óptimos para monitoreo (opcional)</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="humedadMin">Humedad suelo mín. (%)</label>
+                        <input type="number" id="humedadMin" 
+                                [(ngModel)]="cultivoForm.humedadSueloMin" 
+                                name="humedadSueloMin" 
+                                min="0" max="100" step="0.1"
+                                placeholder="Ej: 60">
+                    </div>
+                    <div class="form-group">
+                        <label for="humedadMax">Humedad suelo máx. (%)</label>
+                        <input type="number" id="humedadMax" 
+                                [(ngModel)]="cultivoForm.humedadSueloMax" 
+                                name="humedadSueloMax" 
+                                min="0" max="100" step="0.1"
+                                placeholder="Ej: 80">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tempMin">Temperatura mín. (°C)</label>
+                        <input type="number" id="tempMin" 
+                                [(ngModel)]="cultivoForm.temperaturaMin" 
+                                name="temperaturaMin" 
+                                step="0.1"
+                                placeholder="Ej: 18">
+                    </div>
+                    <div class="form-group">
+                        <label for="tempMax">Temperatura máx. (°C)</label>
+                        <input type="number" id="tempMax" 
+                                [(ngModel)]="cultivoForm.temperaturaMax" 
+                                name="temperaturaMax" 
+                                step="0.1"
+                                placeholder="Ej: 28">
+                    </div>
+                </div>
+                <small class="help-text">Estos valores se usarán como indicativos a tomar en cuenta, con el fin de llevar control sobre las lecturas del sensor</small>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Notas y observaciones</label>
+                <textarea id="descripcion" 
+                            [(ngModel)]="cultivoForm.descripcion" 
+                            name="descripcion" 
+                            rows="3" 
+                            placeholder="Observaciones sobre variedad, método de siembra, tratamientos aplicados..."></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" (click)="closeModal()">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn-save" [disabled]="loading">
+                    <span *ngIf="loading">Guardando...</span>
+                    <span *ngIf="!loading">
+                        {{ modalMode === 'create' ? 'Crear Cultivo' : 'Guardar Cambios' }}
+                    </span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal de confirmación de eliminación -->
+<div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-content modal-delete">
+        <div class="modal-header">
+            <h3>Confirmar eliminación</h3>
+        </div>
+        <div class="modal-body">
+            <p>¿Estás seguro de que deseas eliminar el cultivo <strong>{{ cultivoToDelete?.nombreCultivo }}</strong>?</p>
+            <p class="warning-text">Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" (click)="closeDeleteModal()">
+                Cancelar
+            </button>
+            <button class="btn-delete-confirm" (click)="deleteCultivo()" [disabled]="loading">
+                <span *ngIf="loading">Eliminando...</span>
+                <span *ngIf="!loading">Eliminar</span>
+            </button>
+        </div>
+    </div>
+</div>
