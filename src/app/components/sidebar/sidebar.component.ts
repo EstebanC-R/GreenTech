@@ -78,7 +78,7 @@ export class SidebarComponent implements AfterViewInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // 🔍 DEBUG: Verificar token antes de la petición
+    // DEBUG: Verificar token antes de la petición
     const token = this.authService.getToken();
     console.log('🔐 SIDEBAR DEBUG: Token disponible:', token ? 'Sí' : 'No');
 
@@ -147,5 +147,31 @@ export class SidebarComponent implements AfterViewInit {
 
   refreshProfile(): void {
     this.loadUserProfile();
+  }
+
+  openSupportEmail(): void {
+    const email = 'greentechonesystem@gmail.com';
+    const subject = 'Soporte Técnico - GreenTech';
+    const body = `Estimado equipo de soporte,
+
+  Me pongo en contacto para solicitar ayuda con el sistema GreenTech. 
+  A continuación, incluyo mis datos y una breve descripción del problema:
+
+  Información del usuario:
+  - Usuario: ${this.userProfile?.email || 'No disponible'}
+  - Rol: ${this.userProfile?.rol || 'No disponible'}
+
+  Descripción del problema:
+  [Por favor describa aquí su consulta o inconveniente]
+
+  Muchas gracias por su atención.`;
+
+    //Gmail web (recomendado)
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(gmailUrl, '_blank');
+
+    // Cliente predeterminado de correo (suele ser menos fiable)
+    // const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    // window.location.href = mailtoLink;
   }
 }

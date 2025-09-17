@@ -38,13 +38,6 @@
                     <span class="nav-tooltip">Observaciones</span>
                 </li>
                 <li class="nav-item">
-                    <a routerLink="#" class="nav-link">
-                        <span class="nav-icon material-symbols-rounded">recommend</span>
-                        <span class="nav-label">Recomendaciones</span>
-                    </a>
-                    <span class="nav-tooltip">Recomendaciones</span>
-                </li>
-                <li class="nav-item">
                     <a 
                         [routerLink]="userProfile?.rol === 'ADMINISTRADOR' ? '/empleados' : null"
                         class="nav-link"
@@ -56,12 +49,13 @@
                     <span class="nav-tooltip">Empleados</span>
                 </li>
                 <li class="nav-item">
-                    <a routerLink="#" class="nav-link">
-                        <span class="nav-icon material-symbols-rounded">notifications</span>
-                        <span class="nav-label">Notificaciones</span>
+                    <a class="nav-link" (click)="openSupportEmail()">
+                        <span class="nav-icon material-symbols-rounded">help</span>
+                        <span class="nav-label">Ayuda</span>
                     </a>
-                    <span class="nav-tooltip">Notificaciones</span>
+                    <span class="nav-tooltip">Ayuda</span>
                 </li>
+
             </ul>
 
             <!-- ---------- Secondary bottom nav -------------- -->
