@@ -1,7 +1,7 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-insumos',
   standalone: true,
@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
 export class InsumosComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
-    const apiUrl = 'http://localhost:8080/api/insumos';
+    const apiUrl = `${environment.apiUrl}/insumos`;
 
     interface Insumo {
       id: number;

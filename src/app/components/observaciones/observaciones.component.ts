@@ -1,6 +1,7 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-observaciones',
@@ -11,7 +12,7 @@ import { RouterModule } from '@angular/router';
 })
 export class ObservacionesComponent implements AfterViewInit {
   ngAfterViewInit(): void {
-    const apiUrl = 'http://localhost:8080/api/observaciones';
+    const apiUrl = `${environment.apiUrl}/observaciones`;
 
     interface Observation {
       id: number;

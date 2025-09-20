@@ -2,6 +2,7 @@ import { AfterViewInit, Component} from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-empleados',
@@ -20,8 +21,8 @@ export class EmpleadosComponent implements AfterViewInit {
     (window as any).eliminarEmpleado = this.eliminarEmpleado.bind(this);
 
     
-    const apiUrl = 'http://localhost:8080/api/empleados';
-    const apiUrlArchivos = "http://localhost:8080/api/archivos";
+    const apiUrl = `${environment.apiUrl}/empleados`;
+    const apiUrlArchivos = `${environment.apiUrl}/archivos`;
 
     function analizarErrorBackend(errorObj: any): string {
       console.log('=== ANALIZANDO ERROR MEJORADO ===');

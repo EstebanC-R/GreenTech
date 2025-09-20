@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 import { SensorData, Device, LinkDeviceRequest } from '../interfaces/sensor-data.interface';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';

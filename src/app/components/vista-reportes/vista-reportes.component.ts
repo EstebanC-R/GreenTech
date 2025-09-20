@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Chart } from 'chart.js';
-
+import { environment } from '../../../environments/environment';
 interface DatosSensor {
   timestamp: string;
   temperaturaAmbiente: number;
@@ -44,7 +44,7 @@ export class VistaReportesComponent {
   isGenerating: boolean = false;
   
   // URLs de los endpoints
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl: string = environment.apiUrl;
   
   opcionesReporte = [
     { valor: 'temperatura-suelo', etiqueta: 'Temperatura del Suelo', seleccionado: false },
