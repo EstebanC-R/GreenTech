@@ -39,7 +39,6 @@ export class EmpleadosComponent implements AfterViewInit {
         return String(errorObj);
       }
       
-      // ✅ BUSCAR EL MENSAJE EN DIFERENTES LUGARES CON PRIORIDADES MEJORADAS
       let mensaje = '';
       
       // 1. Verificar si es un error de respuesta HTTP con datos JSON
@@ -2323,7 +2322,7 @@ export class EmpleadosComponent implements AfterViewInit {
       params = params.set('estado', estado);
     }
     
-    this.http.get<any[]>('http://localhost:8080/api/empleados/buscar', { params }).subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/empleados/buscar`, { params }).subscribe({
       next: (data) => {
         this.mostrarResultados(data);
       },
@@ -2382,7 +2381,7 @@ export class EmpleadosComponent implements AfterViewInit {
     console.log('Editar empleado ID:', id);
     
     // Obtener los datos del empleado desde el servidor
-    this.http.get<any>(`http://localhost:8080/api/empleados/${id}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/empleados/${id}`).subscribe({
       next: (empleado) => {
         console.log('Datos del empleado obtenidos:', empleado);
         
@@ -3170,7 +3169,7 @@ export class EmpleadosComponent implements AfterViewInit {
               };
 
               // Enviar actualización de datos básicos
-              const response = await fetch(`http://localhost:8080/api/empleados/${id}`, {
+              const response = await fetch(`${environment.apiUrl}/empleados/${id}`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json'
@@ -3384,7 +3383,7 @@ export class EmpleadosComponent implements AfterViewInit {
 
   // Función auxiliar para subir archivos (reutilizada del código original)
   private async subirArchivosEmpleado(employeeId: number, epsFile?: File, estudiosFile?: File): Promise<void> {
-    const apiUrlArchivos = "http://localhost:8080/api/archivos";
+    const apiUrlArchivos = `${environment.apiUrl}/archivos`;
     
     try {
       if (epsFile) {
@@ -3424,7 +3423,7 @@ export class EmpleadosComponent implements AfterViewInit {
     console.log('Eliminar empleado ID:', id);
     
     // Primero obtener los datos del empleado para mostrar su nombre
-    this.http.get<any>(`http://localhost:8080/api/empleados/${id}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/empleados/${id}`).subscribe({
       next: async (empleado) => {
         // Usar la misma función de confirmación que ya tienes
         const confirmado = await this.mostrarConfirmacion(
@@ -3433,7 +3432,7 @@ export class EmpleadosComponent implements AfterViewInit {
         
         if (confirmado) {
           // Proceder con la eliminación usando la misma lógica
-          this.http.delete(`http://localhost:8080/api/empleados/${id}`).subscribe({
+          this.http.delete(`${environment.apiUrl}/empleados/${id}`).subscribe({
             next: (response) => {
               console.log('Empleado eliminado:', response);
               this.mostrarNotificacion('Empleado eliminado exitosamente', 'success');
