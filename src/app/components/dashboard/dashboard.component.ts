@@ -502,12 +502,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return 'text-red-600';
   }
 
+  // 🔧 FUNCIÓN CORREGIDA: Ajustada para concordar con los valores del ESP32
   getHumedadSueloStatus(humedad: number): { status: string; color: string; bg: string } {
-    if (humedad <= 10) return { status: 'MUY SECO', color: 'text-red-600', bg: 'bg-red-100' };
-    if (humedad <= 25) return { status: 'IDEAL', color: 'text-green-600', bg: 'bg-green-100' };
-    if (humedad <= 50) return { status: 'HÚMEDO', color: 'text-blue-600', bg: 'bg-blue-100' };
-    if (humedad <= 75) return { status: 'MUY HÚMEDO', color: 'text-indigo-600', bg: 'bg-indigo-100' };
-    return { status: 'ENCHARCADO', color: 'text-purple-600', bg: 'bg-purple-100' };
+    // El ESP32 envía: 0% = muy seco, 100% = muy húmedo
+    if (humedad >= 0 && humedad <= 20) {
+      return { status: 'MUY SECO', color: 'text-red-600', bg: 'bg-red-100' };
+    }
+    if (humedad > 20 && humedad <= 40) {
+      return { status: 'SECO', color: 'text-orange-600', bg: 'bg-orange-100' };
+    }
+    if (humedad > 40 && humedad <= 70) {
+      return { status: 'IDEAL', color: 'text-green-600', bg: 'bg-green-100' };
+    }
+    if (humedad > 70 && humedad <= 85) {
+      return { status: 'HÚMEDO', color: 'text-blue-600', bg: 'bg-blue-100' };
+    }
+    if (humedad > 85) {
+      return { status: 'ENCHARCADO', color: 'text-purple-600', bg: 'bg-purple-100' };
+    }
+    
+    // Fallback (no debería llegar aquí)
+    return { status: 'DESCONOCIDO', color: 'text-gray-600', bg: 'bg-gray-100' };
   }
 
   formatTime(timestamp: string): string {
