@@ -83,7 +83,6 @@
     }
 }
 
-
 .fade-in {
     animation: fadeIn 0.5s ease-in;
 }
@@ -359,6 +358,11 @@
     }
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 .data-table {
     .row-latest {
         background: linear-gradient(90deg, #ecfdf5 0%, #f0fdf4 100%);
@@ -398,6 +402,7 @@
     }
 }
 
+/* MEDIA QUERIES RESPONSIVE */
 
 @media (max-width: 1024px) {
     .dashboard-container {
@@ -430,6 +435,66 @@
         width: calc(100% - 2rem);
         max-width: none;
     }
+    
+
+    header .flex.justify-between.items-center {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem;
+        padding: 1rem 0 !important;
+    }
+    
+
+    header h1 {
+        font-size: 1.5rem !important;
+        margin-bottom: 0.5rem;
+    }
+    
+
+    header .flex.items-center.space-x-4:last-child {
+        width: 100% !important;
+        justify-content: space-between !important;
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+    
+
+    header .flex.items-center.space-x-2 {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Texto del email más corto */
+    header .flex.items-center.space-x-2 span {
+        max-width: 150px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+    
+
+    .bg-white.rounded-lg.shadow.overflow-hidden:has(.data-table-container) {
+        overflow-x: auto !important;
+    }
+    
+
+    .px-6.py-4.border-b.border-gray-200 {
+        padding: 1rem !important;
+    }
+    
+    .px-6.py-4.border-b.border-gray-200 h2 {
+        font-size: 1.125rem !important;
+    }
+    
+
+    div[style*="background-color: #ffe5e5"] {
+        padding: 0.75rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    div[style*="background-color: #ffe5e5"] h2 {
+        font-size: 0.875rem !important;
+        line-height: 1.3 !important;
+    }
 }
 
 @media (max-width: 640px) {
@@ -447,5 +512,241 @@
         th, td {
             padding: 0.5rem 0.75rem;
         }
+    }
+    
+    /* Controles de período responsive */
+    .flex.flex-wrap.items-center.justify-between.gap-4 {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 1rem !important;
+    }
+    
+    .flex.items-center.space-x-2 .flex.space-x-1 {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 0.5rem !important;
+        width: 100% !important;
+    }
+    
+    .flex.items-center.space-x-3 {
+        justify-content: space-between !important;
+        width: 100% !important;
+    }
+    
+
+    .data-table-container {
+        font-size: 0.75rem !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    .data-table-container table {
+        min-width: 700px !important;
+        width: 700px !important;
+    }
+    
+    .data-table-container th,
+    .data-table-container td {
+        padding: 0.5rem 0.375rem !important;
+        font-size: 0.75rem !important;
+        white-space: nowrap !important;
+    }
+    
+    /* Columna de tiempo más estrecha */
+    .data-table-container th:first-child,
+    .data-table-container td:first-child {
+        width: 80px !important;
+        min-width: 80px !important;
+    }
+    
+    /* Columnas de mediciones más estrechas */
+    .data-table-container th:nth-child(2),
+    .data-table-container td:nth-child(2),
+    .data-table-container th:nth-child(3),
+    .data-table-container td:nth-child(3),
+    .data-table-container th:nth-child(4),
+    .data-table-container td:nth-child(4) {
+        width: 90px !important;
+        min-width: 90px !important;
+    }
+    
+    .data-table-container th:nth-child(5),
+    .data-table-container td:nth-child(5) {
+        width: 140px !important;
+        min-width: 140px !important;
+    }
+
+    .data-table-container th:nth-child(6),
+    .data-table-container td:nth-child(6) {
+        width: 70px !important;
+        min-width: 70px !important;
+    }
+    
+    /* Footer más compacto */
+    .px-6.py-3.bg-gray-50.border-t {
+        padding: 0.75rem 1rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    .px-6.py-3.bg-gray-50.border-t .flex {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+        align-items: flex-start !important;
+    }
+
+
+    header .max-w-7xl.mx-auto {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    header h1 {
+        font-size: 1.25rem !important;
+    }
+    
+
+    header .flex.justify-between.items-center {
+        align-items: stretch !important;
+    }
+    
+    header .flex.items-center.space-x-4:last-child {
+        display: grid !important;
+        grid-template-columns: 1fr auto !important;
+        gap: 0.75rem !important;
+        width: 100% !important;
+    }
+    
+
+    .user-connection-info {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.25rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    /* Botón logout alineado a la derecha */
+    header button[title="Cerrar Sesión"] {
+        justify-self: end !important;
+        align-self: flex-start !important;
+    }
+    
+    header .fa-user {
+        display: none !important;
+    }
+    
+    /* Email aún más corto */
+    header .flex.items-center.space-x-2 span {
+        max-width: 120px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Para móviles muy pequeños */
+    header h1 {
+        font-size: 1.125rem !important;
+    }
+    
+    /* Contenedor principal con padding mínimo */
+    header .max-w-7xl.mx-auto {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    
+    /* Info de conexión más compacta */
+    header .flex.items-center.space-x-2 {
+        font-size: 0.7rem !important;
+        gap: 0.25rem !important;
+    }
+    
+    /* Iconos más pequeños */
+    header i.fas {
+        font-size: 0.875rem !important;
+    }
+    
+    /* Email muy corto */
+    header .flex.items-center.space-x-2 span {
+        max-width: 100px !important;
+    }
+    
+    /* Estado de conexión sin texto en móviles muy pequeños */
+    .connection-status-mobile {
+        display: none !important;
+    }
+    
+    /* Controles de período ultra compactos */
+    .flex.items-center.space-x-2 span {
+        font-size: 0.75rem !important;
+    }
+    
+    .flex.space-x-1 button {
+        padding: 0.375rem 0.5rem !important;
+        font-size: 0.625rem !important;
+    }
+    
+    /* Tabla ultra compacta pero funcional */
+    .data-table-container {
+        font-size: 0.65rem !important;
+    }
+    
+    .data-table-container th,
+    .data-table-container td {
+        padding: 0.375rem 0.25rem !important;
+        font-size: 0.65rem !important;
+    }
+    
+    /* móviles muy pequeños */
+    .data-table-container table {
+        min-width: 600px !important;
+        width: 600px !important;
+    }
+    
+    /* Ajustar anchos de columnas */
+    .data-table-container th:first-child,
+    .data-table-container td:first-child {
+        width: 70px !important;
+        min-width: 70px !important;
+    }
+    
+    .data-table-container th:nth-child(2),
+    .data-table-container td:nth-child(2),
+    .data-table-container th:nth-child(3),
+    .data-table-container td:nth-child(3),
+    .data-table-container th:nth-child(4),
+    .data-table-container td:nth-child(4) {
+        width: 75px !important;
+        min-width: 75px !important;
+    }
+    
+    .data-table-container th:nth-child(5),
+    .data-table-container td:nth-child(5) {
+        width: 120px !important;
+        min-width: 120px !important;
+    }
+    
+    .data-table-container th:nth-child(6),
+    .data-table-container td:nth-child(6) {
+        width: 60px !important;
+        min-width: 60px !important;
+    }
+    
+    /* Badges más pequeños */
+    .data-table-container .inline-flex.items-center.px-2\.5.py-0\.5 {
+        padding: 0.125rem 0.375rem !important;
+        font-size: 0.5rem !important;
+    }
+    
+    /* Header de tabla más compacto */
+    .px-6.py-4.border-b.border-gray-200 {
+        padding: 0.75rem !important;
+    }
+    
+    .px-6.py-4.border-b.border-gray-200 h2 {
+        font-size: 1rem !important;
+    }
+    
+
+    div[style*="background-color: #ffe5e5"] h2 {
+        font-size: 0.7rem !important;
+        padding: 0.25rem !important;
     }
 }
