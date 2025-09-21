@@ -394,7 +394,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           },
           y: {
             beginAtZero: true,
-            max: 100,
+            max: 80,
             title: {
               display: true,
               text: 'Humedad (%)'
@@ -502,26 +502,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return 'text-red-600';
   }
 
-  // 🔧 FUNCIÓN CORREGIDA: Ajustada para concordar con los valores del ESP32
+  // 🔧 FUNCIÓN CORREGIDA: Rangos más realistas para sensor YL-69
   getHumedadSueloStatus(humedad: number): { status: string; color: string; bg: string } {
-    // El ESP32 envía: 0% = muy seco, 100% = muy húmedo
-    if (humedad >= 0 && humedad <= 20) {
+    // Rangos ajustados para YL-69 (máximo 80% en lugar de 100%)
+    if (humedad >= 0 && humedad <= 15) {
       return { status: 'MUY SECO', color: 'text-red-600', bg: 'bg-red-100' };
     }
-    if (humedad > 20 && humedad <= 40) {
+    if (humedad > 15 && humedad <= 30) {
       return { status: 'SECO', color: 'text-orange-600', bg: 'bg-orange-100' };
     }
-    if (humedad > 40 && humedad <= 70) {
+    if (humedad > 30 && humedad <= 50) {
       return { status: 'IDEAL', color: 'text-green-600', bg: 'bg-green-100' };
     }
-    if (humedad > 70 && humedad <= 85) {
+    if (humedad > 50 && humedad <= 65) {
       return { status: 'HÚMEDO', color: 'text-blue-600', bg: 'bg-blue-100' };
     }
-    if (humedad > 85) {
-      return { status: 'ENCHARCADO', color: 'text-purple-600', bg: 'bg-purple-100' };
+    if (humedad > 65) {
+      return { status: 'MUY HÚMEDO', color: 'text-indigo-600', bg: 'bg-indigo-100' };
     }
     
-    // Fallback (no debería llegar aquí)
+    // Fallback
     return { status: 'DESCONOCIDO', color: 'text-gray-600', bg: 'bg-gray-100' };
   }
 
