@@ -73,19 +73,12 @@ export class SidebarComponent implements AfterViewInit {
     }
   }
 
-
   loadUserProfile(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // DEBUG: Verificar token antes de la petición
-    const token = this.authService.getToken();
-    console.log('🔐 SIDEBAR DEBUG: Token disponible:', token ? 'Sí' : 'No');
-
     this.authService.getUserProfile().subscribe({
       next: (response) => {
-        console.log('📥 SIDEBAR DEBUG: Respuesta completa:', response);
-          
         if (response.email) {
           this.userProfile = {
             email: response.email,
@@ -134,7 +127,6 @@ export class SidebarComponent implements AfterViewInit {
   confirmLogout(): void {
     this.authService.logout().subscribe({
       next: () => {
-        console.log('Logout exitoso');
         this.router.navigate(['/login']);
       },
       error: (error) => {

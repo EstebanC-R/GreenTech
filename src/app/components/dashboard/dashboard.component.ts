@@ -78,7 +78,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   forceReconnect(): void {
-    console.log('Forzando reconexión desde componente...');
     this.sensorService.forceReconnect();
     
     setTimeout(() => {
@@ -95,7 +94,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('🔧 TEST: Información de conexión:');
+    console.log('Información de conexión:');
     console.log('User email:', user.email);
     console.log('Topic esperado:', `/topic/sensor-data/${user.email}`);
     console.log('Connected:', this.connected);
@@ -112,11 +111,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   checkDataFlow(): void {
-    console.log('🔍 DEBUG: Verificando flujo completo de datos...');
+    console.log('Verificando flujo completo de datos...');
     
     const user = this.getCurrentUser();
     console.log('1. Usuario:', user);
-    
 
     console.log('2. WebSocket conectado:', this.connected);
 
@@ -143,16 +141,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   sensorData: SensorData[] = [];
   latestData: SensorData | null = null;
   
-
   connected: boolean = false;
   loading: boolean = false;
   showLinkDevice: boolean = false;
   
-
   deviceCode: string = '';
   deviceName: string = '';
   
-
   temperatureChart: Chart | null = null;
   humidityChart: Chart | null = null;
 
@@ -166,11 +161,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('=== DEBUG DASHBOARD INIT ===');
-    console.log('SensorService URL:', this.sensorService['apiUrl']);
-
     this.loadUser();
-    
     this.waitForUserAndInitialize();
   }
 
@@ -180,20 +171,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
       const userStr = localStorage.getItem('user');
       const token = localStorage.getItem('token');
         
-      console.log('🔍 DEBUG: Verificando usuario disponible...');
-      console.log('- User en localStorage:', userStr);
-      console.log('- Token en localStorage:', token ? 'Presente' : 'Ausente');
-        
       if (userStr && token) {
         try {
           const user = JSON.parse(userStr);
           if (user && user.email) {
-            console.log('✅ DEBUG: Usuario válido encontrado:', user);
             this.initializeServices();
             return true;
           }
         } catch (e) {
-          console.error('❌ DEBUG: Error parseando usuario:', e);
+          console.error('Error parseando usuario:', e);
         }
       }
       return false;
@@ -208,28 +194,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
     
     const interval = setInterval(() => {
       attempts++;
-      console.log(`🔄 DEBUG: Intento ${attempts}/${maxAttempts} de encontrar usuario`);
         
       if (checkUser()) {
         clearInterval(interval);
       } else if (attempts >= maxAttempts) {
         clearInterval(interval);
-        console.error('❌ DEBUG: Máximo de intentos alcanzado. Usuario no disponible.');
       }
     }, 500);
   }
 
   private initializeServices(): void {
-    console.log('🚀 DEBUG: Inicializando servicios...');
-    
     this.sensorService.initializeIfNeeded();
     
     this.setupWebSocketSubscription();
     this.setupSensorDataSubscription();
     
     this.loadDevices();
-    
-    console.log('✅ DEBUG: Servicios inicializados correctamente');
   }
 
   debugUserStatus(): void {
@@ -289,14 +269,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private setupSensorDataSubscription(): void {
-    console.log('🔧 DEBUG: Configurando suscripción a datos del sensor...');
-    
     const sub = this.sensorService.sensorData$.subscribe(data => {
-      console.log('📊 DEBUG: Datos en tiempo real recibidos:', data);
-      
       if (data && this.selectedDevice && data.deviceCode === this.selectedDevice.deviceCode) {
-        console.log('✅ DEBUG: Datos corresponden al dispositivo seleccionado');
-        
         // Verificar si ya existe este dato (evitar duplicados)
         const existingDataIndex = this.sensorData.findIndex(
           existing => existing.timestamp === data.timestamp && existing.deviceCode === data.deviceCode
@@ -312,36 +286,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.sensorData = this.sensorData.slice(-this.maxDataPoints);
           }
           
-          console.log('📊 DEBUG: Nuevo dato agregado. Total:', this.sensorData.length);
-          
           // Actualizar gráficos y UI
           this.updateCharts();
           this.cdr.detectChanges();
-        } else {
-          console.log('⚠️ DEBUG: Dato duplicado ignorado');
         }
       }
     });
     
     this.subscriptions.push(sub);
-    console.log('✅ DEBUG: Suscripción configurada. Total suscripciones:', this.subscriptions.length);
   }
 
   selectDevice(device: Device): void {
-    console.log('📱 DEBUG: Seleccionando dispositivo:', device.deviceCode);
     this.selectedDevice = device;
     this.loadHistoricalDataForDevice(device.deviceCode);
   }
 
   // MÉTODO PRINCIPAL MODIFICADO - Cargar datos históricos más extensos
   private loadHistoricalDataForDevice(deviceCode: string): void {
-    console.log(`📊 DEBUG: Cargando datos históricos para ${deviceCode} (${this.historicalDataPeriod} horas)`);
     this.isLoadingHistoricalData = true;
     
     const sub = this.sensorService.getSensorData(deviceCode, this.historicalDataPeriod).subscribe({
       next: (data) => {
-        console.log(`✅ DEBUG: Datos históricos cargados: ${data.length} registros`);
-        
         // Ordenar por timestamp para asegurar orden cronológico
         this.sensorData = data.sort((a, b) => 
           new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
@@ -351,18 +316,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.latestData = this.sensorData.length > 0 ? 
           this.sensorData[this.sensorData.length - 1] : null;
         
-        console.log('📊 DEBUG: Datos ordenados:', {
-          total: this.sensorData.length,
-          primero: this.sensorData[0]?.timestamp,
-          ultimo: this.latestData?.timestamp
-        });
-        
         this.updateCharts();
         this.isLoadingHistoricalData = false;
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('❌ DEBUG: Error cargando datos históricos:', error);
+        console.error('Error cargando datos históricos:', error);
         this.isLoadingHistoricalData = false;
         this.cdr.detectChanges();
       }
@@ -374,7 +333,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   changeHistoricalPeriod(hours: number): void {
     if (this.selectedDevice && hours !== this.historicalDataPeriod) {
       this.historicalDataPeriod = hours;
-      console.log(`🔄 DEBUG: Cambiando período histórico a ${hours} horas`);
       this.loadHistoricalDataForDevice(this.selectedDevice.deviceCode);
     }
   }
@@ -382,7 +340,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // NUEVO MÉTODO - Refrescar datos históricos manualmente
   refreshHistoricalData(): void {
     if (this.selectedDevice) {
-      console.log('🔄 DEBUG: Refrescando datos históricos manualmente');
       this.loadHistoricalDataForDevice(this.selectedDevice.deviceCode);
     }
   }
@@ -613,15 +570,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const request = {
       deviceCode: this.deviceCode.toUpperCase().trim(),
       deviceName: this.deviceName.trim(),
-      userEmail: currentUser.email, // Agregar email del usuario
-      // Agrega otros campos si tu backend los requiere
+      userEmail: currentUser.email,
     };
-
-    console.log('Enviando request para vincular dispositivo:', request);
 
     const sub = this.sensorService.linkDevice(request).subscribe({
       next: (response) => {
-        console.log('Respuesta del servidor:', response);
         if (response && response.success) {
           alert('¡Dispositivo vinculado exitosamente!');
           this.loadDevices();
@@ -725,7 +678,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   confirmLogout(): void {
     this.authService.logout().subscribe({
       next: () => {
-        console.log('Logout exitoso');
         this.sensorService.disconnect();
         this.router.navigate(['/login']);
       },

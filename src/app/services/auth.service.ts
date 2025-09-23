@@ -95,10 +95,8 @@ export class AuthService {
         return this.http.post(`${this.apiUrl}/register`, userData);
     }
 
-    // Guardar datos de autenticación - MÉTODO ACTUALIZADO (tu versión con logs)
+    // Guardar datos de autenticación
     saveAuthData(response: LoginResponse): void {
-        console.log('🔧 AUTH DEBUG: Guardando datos de autenticación:', response);
-        
         if (response.token && (response.email || response.user?.email)) {
             const email = response.email || response.user?.email || '';
             const rol = response.rol || response.user?.rol || '';
@@ -115,32 +113,17 @@ export class AuthService {
             };
             
             localStorage.setItem('user', JSON.stringify(userObject));
-            console.log('✅ AUTH DEBUG: Usuario guardado en localStorage:', userObject);
-            console.log('✅ AUTH DEBUG: Token guardado:', response.token ? 'Presente' : 'Ausente');
 
             // Actualizar BehaviorSubjects
             this.currentUserSubject.next(userObject);
             this.tokenSubject.next(response.token);
-            
-            // Verificar que se guardó correctamente
-            const savedUser = localStorage.getItem('user');
-            const savedToken = localStorage.getItem('token');
-            console.log('🔍 AUTH DEBUG: Verificación - Usuario guardado:', savedUser);
-            console.log('🔍 AUTH DEBUG: Verificación - Token guardado:', savedToken ? 'Presente' : 'Ausente');
-        } else {
-            console.error('❌ AUTH DEBUG: Datos de respuesta incompletos:', response);
         }
     }
 
-    // Verificar autenticación almacenada - MÉTODO ACTUALIZADO (tu versión con logs)
+    // Verificar autenticación almacenada
     private checkStoredAuth(): void {
-        console.log('🔧 AUTH DEBUG: Verificando autenticación almacenada...');
-        
         const token = localStorage.getItem('token');
         const userStr = localStorage.getItem('user');
-        
-        console.log('🔍 AUTH DEBUG: Token en localStorage:', token ? 'Presente' : 'Ausente');
-        console.log('🔍 AUTH DEBUG: User en localStorage:', userStr);
 
         if (token) {
             this.tokenSubject.next(token);
@@ -149,11 +132,10 @@ export class AuthService {
             if (userStr) {
                 try {
                     const user = JSON.parse(userStr);
-                    console.log('✅ AUTH DEBUG: Usuario parseado correctamente:', user);
                     this.currentUserSubject.next(user);
                     return;
                 } catch (e) {
-                    console.warn('⚠️ AUTH DEBUG: Error parsing stored user, usando fallback:', e);
+                    // Error parsing, continuar con fallback
                 }
             }
 
@@ -162,16 +144,11 @@ export class AuthService {
             const rol = localStorage.getItem('rol');
             if (email && rol) {
                 const fallbackUser = { email, rol };
-                console.log('✅ AUTH DEBUG: Usando fallback user:', fallbackUser);
                 
                 // Guardar en formato correcto para futuras sesiones
                 localStorage.setItem('user', JSON.stringify(fallbackUser));
                 this.currentUserSubject.next(fallbackUser);
-            } else {
-                console.error('❌ AUTH DEBUG: No se pudo restaurar usuario de localStorage');
             }
-        } else {
-            console.log('ℹ️ AUTH DEBUG: No hay token almacenado');
         }
     }
 
@@ -215,18 +192,8 @@ export class AuthService {
     }
 
     getUserProfile(): Observable<UserProfileResponse> {
-        const token = this.getToken();
-        console.log('🔍 AUTH DEBUG: Obteniendo perfil con token:', token ? 'Presente' : 'Ausente');
-        
         const headers = this.getHttpHeaders();
-        console.log('📋 AUTH DEBUG: Headers para profile:', headers);
-        
-        return this.http.get<UserProfileResponse>(`${this.apiUrl}/profile`, { headers })
-            .pipe(
-                tap(response => {
-                    console.log('✅ AUTH DEBUG: Respuesta del perfil:', response);
-                })
-            );
+        return this.http.get<UserProfileResponse>(`${this.apiUrl}/profile`, { headers });
     }
 
     // Obtener token
@@ -276,14 +243,9 @@ export class AuthService {
         return {};
     }
 
-    // Obtener headers HTTP completos - MEJORADO CON LOG (tu versión)
+    // Obtener headers HTTP completos
     private getHttpHeaders(): HttpHeaders {
         const token = this.getToken();
-        console.log('🔐 AUTH DEBUG: Creando headers con token:', token ? `Bearer ${token.substring(0, 20)}...` : 'Sin token');
-        
-        if (!token) {
-            console.warn('⚠️ AUTH DEBUG: No hay token disponible para los headers');
-        }
         
         return new HttpHeaders({
             'Content-Type': 'application/json',
