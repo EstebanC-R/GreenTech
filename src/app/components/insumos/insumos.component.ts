@@ -2,6 +2,7 @@ import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../../environments/environment';
+
 @Component({
   selector: 'app-insumos',
   standalone: true,
@@ -63,6 +64,23 @@ export class InsumosComponent implements AfterViewInit {
         style: 'currency',
         currency: 'COP'
       }).format(cantidad);
+    }
+
+    // Función para convertir fecha a formato YYYY-MM-DD para input date
+    function convertirFechaParaInput(fecha: any): string {
+      if (!fecha) return '';
+      
+      // Si es un array [año, mes, día] (como viene de Java LocalDate)
+      if (Array.isArray(fecha) && fecha.length >= 3) {
+        const year = fecha[0];
+        const month = String(fecha[1]).padStart(2, '0');
+        const day = String(fecha[2]).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+      
+      // Si es string, tomar los primeros 10 caracteres
+      const fechaStr = String(fecha);
+      return fechaStr.substring(0, 10);
     }
 
     // Función para validar datos del formulario
@@ -274,7 +292,7 @@ export class InsumosComponent implements AfterViewInit {
       });
     }
 
-    // Función para renderizar los insumos con el diseño del segundo archivo
+    // Función para renderizar los insumos
     function renderizarInsumos(insumos: Insumo[]) {
       const listaInsumos = document.getElementById('lista-insumos');
       if (!listaInsumos) return;
@@ -507,7 +525,7 @@ export class InsumosComponent implements AfterViewInit {
 
         nuevaTarjeta.appendChild(contenidoContainer);
 
-        // Botones con el estilo del segundo archivo
+        // Botones
         const botonesContainer = document.createElement('div');
         botonesContainer.style.cssText = `
           display: flex;
@@ -597,7 +615,6 @@ export class InsumosComponent implements AfterViewInit {
                 throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
               }
               mostrarNotificacion('Insumo eliminado exitosamente', 'success');
-              // Remover de los arrays y re-renderizar
               todosLosInsumos = todosLosInsumos.filter(i => i.id !== insumo.id);
               filtrarInsumos();
             })
@@ -663,7 +680,7 @@ export class InsumosComponent implements AfterViewInit {
       });
     }
 
-    // Función para mostrar formulario de actualización con estilo mejorado
+    // Función para mostrar formulario de actualización
     function mostrarFormularioActualizacion(insumo: Insumo, tarjeta: HTMLElement) {
       const formularioExistente = tarjeta.querySelector('form');
       if (formularioExistente) {
@@ -682,7 +699,6 @@ export class InsumosComponent implements AfterViewInit {
         border: 1px solid #e5e7eb;
       `;
 
-      // Crear opciones de select para unidades de medida
       const opcionesUnidades = unidadesMedida.map(unidad => 
         `<option value="${unidad}" ${unidad === insumo.medida ? 'selected' : ''}>${unidad}</option>`
       ).join('');
@@ -690,29 +706,41 @@ export class InsumosComponent implements AfterViewInit {
       formulario.innerHTML = `
         <div class="form-grid-edit" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
           <div class="form-group-edit">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Producto:</label>
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Producto *</label>
+            <input type="text" id="producto-edit" value="${sanitizeText(insumo.producto)}" 
+                   style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; transition: border-color 0.2s;" 
+                   maxlength="50" required>
+          </div>
+          <div class="form-group-edit">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Proveedor *</label>
+            <input type="text" id="proveedor-edit" value="${sanitizeText(insumo.proveedor)}" 
+                   style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; transition: border-color 0.2s;" 
+                   maxlength="50" required>
+          </div>
+          <div class="form-group-edit">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Cantidad Usada *</label>
             <input type="number" id="cantidad-edit" value="${insumo.cantidadUsada}" 
                    style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; transition: border-color 0.2s;" 
                    step="0.01" min="0" max="999999.99" required>
           </div>
           <div class="form-group-edit">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Unidad:</label>
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Unidad *</label>
             <select id="medida-edit" 
                     style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; transition: border-color 0.2s;" required>
               ${opcionesUnidades}
             </select>
           </div>
           <div class="form-group-edit">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Costo:</label>
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Costo *</label>
             <input type="number" id="costo-edit" value="${insumo.costo}" 
                    style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; transition: border-color 0.2s;" 
                    step="0.01" min="0" max="999999.99" required>
           </div>
-        </div>
-        <div class="form-group-edit" style="margin-bottom: 20px;">
-          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Fecha de uso:</label>
-          <input type="date" id="fecha-edit" value="${insumo.fechaDeUso}" 
-                 style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; transition: border-color 0.2s;" required>
+          <div class="form-group-edit">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Fecha de uso *</label>
+            <input type="date" id="fecha-edit" value="${convertirFechaParaInput(insumo.fechaDeUso)}" 
+                   style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; transition: border-color 0.2s;" required>
+          </div>
         </div>
         <div id="errores-validacion" style="margin-bottom: 20px;"></div>
         <div class="form-actions-edit" style="display: flex; gap: 12px; justify-content: flex-end;">
@@ -748,7 +776,6 @@ export class InsumosComponent implements AfterViewInit {
 
       tarjeta.appendChild(formulario);
 
-      // Agregar efectos hover a los botones
       const btnCancelar = formulario.querySelector('#btn-cancelar') as HTMLElement;
       const btnGuardar = formulario.querySelector('#btn-guardar') as HTMLElement;
 
@@ -776,7 +803,6 @@ export class InsumosComponent implements AfterViewInit {
         });
       }
 
-      // Agregar efectos focus a los inputs
       const inputs = formulario.querySelectorAll('input, select');
       inputs.forEach(input => {
         const element = input as HTMLElement;
@@ -876,7 +902,7 @@ export class InsumosComponent implements AfterViewInit {
         .then(responseData => {
           mostrarNotificacion('Insumo actualizado exitosamente', 'success');
           formulario.remove();
-          obtenerInsumos(); // Recargar lista
+          obtenerInsumos();
         })
         .catch(error => {
           console.error('Error:', error);
@@ -887,7 +913,6 @@ export class InsumosComponent implements AfterViewInit {
       });
     }
 
-    // Función para manejar envío del formulario principal
     function manejarEnvioFormulario(event: Event) {
       event.preventDefault();
       
@@ -964,7 +989,6 @@ export class InsumosComponent implements AfterViewInit {
       });
     }
 
-    // Función para mostrar errores en el formulario principal
     function mostrarErroresFormulario(errores: string[]) {
       const erroresAnteriores = document.querySelectorAll('.error-validacion');
       erroresAnteriores.forEach(error => error.remove());
@@ -1011,7 +1035,6 @@ export class InsumosComponent implements AfterViewInit {
       }
     }
 
-    // Función para mostrar notificaciones
     function mostrarNotificacion(mensaje: string, tipo: 'success' | 'error') {
       const notificacion = document.createElement('div');
       notificacion.className = `notificacion ${tipo}`;
@@ -1065,7 +1088,6 @@ export class InsumosComponent implements AfterViewInit {
       }, 4000);
     }
 
-    // Configurar validación en tiempo real
     function configurarValidacionTiempoReal() {
       const campos = ['producto', 'cantidad', 'medida', 'fecha', 'costo', 'proveedor'];
       
@@ -1079,7 +1101,6 @@ export class InsumosComponent implements AfterViewInit {
         }
       });
 
-      // Agregar contadores de caracteres
       const camposTexto = [
         { id: 'producto', max: 50 },
         { id: 'proveedor', max: 50 }
@@ -1113,22 +1134,15 @@ export class InsumosComponent implements AfterViewInit {
       });
     }
     
-    // Inicializar la aplicación
     obtenerInsumos();
-    
-    // Configurar filtros
     setTimeout(configurarFiltros, 100);
-
-    // Configurar validación en tiempo real
     setTimeout(configurarValidacionTiempoReal, 100);
     
-    // Configurar formulario principal
     const form = document.getElementById('insumoForm');
     if (form) {
       form.addEventListener('submit', manejarEnvioFormulario);
     }
 
-    // Configurar botón cancelar
     const cancelBtn = document.getElementById('cancelBtn');
     if (cancelBtn) {
       cancelBtn.addEventListener('click', () => {
@@ -1137,7 +1151,6 @@ export class InsumosComponent implements AfterViewInit {
       });
     }
 
-    // Configurar el botón para mostrar/ocultar el formulario
     const addBtn = document.getElementById('addBtn');
     const formContainer = document.getElementById('formContainer');
     
@@ -1161,7 +1174,6 @@ export class InsumosComponent implements AfterViewInit {
       });
     }
 
-    // Función para verificar conexión con el servidor
     function verificarConexionServidor() {
       const token = localStorage.getItem('token');
       if (!token) return;
@@ -1186,7 +1198,6 @@ export class InsumosComponent implements AfterViewInit {
 
     verificarConexionServidor();
 
-    // Manejar errores globales
     window.addEventListener('error', (event) => {
       console.error('Error global capturado:', event.error);
       mostrarNotificacion('Se produjo un error inesperado. Revisa la consola para más detalles.', 'error');
